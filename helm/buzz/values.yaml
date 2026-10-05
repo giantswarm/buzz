@@ -174,7 +174,9 @@ relay:
       memory: "2Gi"
 
   podAnnotations: {} # @schema additionalProperties: true
-  podLabels: {} # @schema additionalProperties: true
+  # The owning team, as on every Giant Swarm app's pods.
+  podLabels: # @schema additionalProperties: true
+    application.giantswarm.io/team: bumblebee
   nodeSelector: {} # @schema additionalProperties: true
   tolerations: []
   affinity: {} # @schema additionalProperties: true

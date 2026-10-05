@@ -1,4 +1,8 @@
 replace-chart-version-with-git: true
+# C0001 looks for the team label in templates/_helpers.tpl; the templates are
+# upstream's, vendored unchanged, so the label comes from values.yaml
+# (relay.podLabels) instead.
+giantswarm-validator-ignored-checks: C0001
 generate-metadata: true
 chart-dir: ./helm/buzz
 destination: ./build

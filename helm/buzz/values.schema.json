@@ -423,7 +423,12 @@
                 },
                 "podLabels": {
                     "type": "object",
-                    "additionalProperties": true
+                    "additionalProperties": true,
+                    "properties": {
+                        "application.giantswarm.io/team": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "pubkeyAllowlist": {
                     "type": "boolean"

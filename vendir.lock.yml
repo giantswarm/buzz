@@ -11,7 +11,7 @@ directories:
 - contents:
   - directory: {}
     path: .
-  path: helm/buzz/templates
+  path: helm/buzz/templates/upstream
 - contents:
   - helmChart:
       appVersion: 18.4.0

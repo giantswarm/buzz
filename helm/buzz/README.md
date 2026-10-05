@@ -88,7 +88,7 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | relay.resources.limits.cpu | string | `"2"` |  |
 | relay.resources.limits.memory | string | `"2Gi"` |  |
 | relay.podAnnotations | object | `{}` |  |
-| relay.podLabels | object | `{}` |  |
+| relay.podLabels."application.giantswarm.io/team" | string | `"bumblebee"` |  |
 | relay.nodeSelector | object | `{}` |  |
 | relay.tolerations | list | `[]` |  |
 | relay.affinity | object | `{}` |  |
