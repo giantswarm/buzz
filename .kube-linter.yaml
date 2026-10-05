@@ -1,0 +1,6 @@
+checks:
+  exclude:
+    # The relay writes git repositories to its working paths; upstream sets
+    # readOnlyRootFilesystem: false on purpose (helm/buzz/values.yaml,
+    # relay.containerSecurityContext).
+    - "no-read-only-root-fs"
