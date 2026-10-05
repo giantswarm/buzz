@@ -1,0 +1,25 @@
+apiVersion: vendir.k14s.io/v1alpha1
+directories:
+- contents:
+  - git:
+      commitTitle: 'chore(release): release Buzz Relay version 0.2.1 (#2856)...'
+      sha: 6e5c462ac524de60d7edb46c66130fd779cc9006
+      tags:
+      - relay-v0.2.1
+    path: buzz
+  path: vendor
+- contents:
+  - directory: {}
+    path: .
+  path: helm/buzz/templates
+- contents:
+  - helmChart:
+      appVersion: 18.4.0
+      version: 0.19.5
+    path: postgres
+  - helmChart:
+      appVersion: 8.8.0
+      version: 0.30.3
+    path: redis
+  path: helm/buzz/charts
+kind: LockConfig
