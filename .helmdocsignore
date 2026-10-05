@@ -1,5 +1,0 @@
-# Vendored upstream subcharts (vendir.yml): their READMEs are upstream's.
-buzz/charts/postgres
-buzz/charts/postgres/charts/common
-buzz/charts/redis
-buzz/charts/redis/charts/common

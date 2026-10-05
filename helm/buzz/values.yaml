@@ -52,7 +52,7 @@ autoscaling:
   websocketMetricEnabled: true
   websocketMetricName: buzz_ws_connections_active
   targetWebsocketConnections: 5000
-  behavior: # @schema skipProperties: true; additionalProperties: true
+  behavior:  # @schema skipProperties: true; additionalProperties: true
     scaleUp:
       stabilizationWindowSeconds: 0
       policies:
@@ -128,7 +128,7 @@ relay:
   # exists. null lets the chart render false automatically when
   # replicaCount > 1. Explicit true with replicaCount > 1 means the operator
   # accepts/owns the external multi-pod audio/SFU behavior.
-  huddleAudioAvailable: null # @schema type: [boolean, null]
+  huddleAudioAvailable: null  # @schema type: [boolean, null]
   ephemeralTtlOverride: 0
   # Per-upload-event records (`_uploads/` moderation side channel). Off by
   # default. Operators hosting communities for other people may have legal
@@ -142,7 +142,7 @@ relay:
   uploadIpHeader: ""
   uploadPortHeader: ""
 
-  livenessProbe: # @schema skipProperties: true; additionalProperties: true
+  livenessProbe:  # @schema skipProperties: true; additionalProperties: true
     httpGet:
       path: /_liveness
       port: health
@@ -150,7 +150,7 @@ relay:
     periodSeconds: 10
     timeoutSeconds: 3
     failureThreshold: 3
-  readinessProbe: # @schema skipProperties: true; additionalProperties: true
+  readinessProbe:  # @schema skipProperties: true; additionalProperties: true
     httpGet:
       path: /_readiness
       port: health
@@ -158,14 +158,14 @@ relay:
     periodSeconds: 5
     timeoutSeconds: 3
     failureThreshold: 3
-  startupProbe: # @schema skipProperties: true; additionalProperties: true
+  startupProbe:  # @schema skipProperties: true; additionalProperties: true
     httpGet:
       path: /_liveness
       port: health
     failureThreshold: 60
     periodSeconds: 2
 
-  resources: # @schema skipProperties: true; additionalProperties: true
+  resources:  # @schema skipProperties: true; additionalProperties: true
     requests:
       cpu: "500m"
       memory: "512Mi"
@@ -173,22 +173,22 @@ relay:
       cpu: "2"
       memory: "2Gi"
 
-  podAnnotations: {} # @schema additionalProperties: true
+  podAnnotations: {}  # @schema additionalProperties: true
   # The owning team, as on every Giant Swarm app's pods.
-  podLabels: # @schema additionalProperties: true
+  podLabels:  # @schema additionalProperties: true
     application.giantswarm.io/team: bumblebee
-  nodeSelector: {} # @schema additionalProperties: true
+  nodeSelector: {}  # @schema additionalProperties: true
   tolerations: []
-  affinity: {} # @schema additionalProperties: true
+  affinity: {}  # @schema additionalProperties: true
   topologySpreadConstraints: []
-  securityContext: # @schema skipProperties: true; additionalProperties: true
+  securityContext:  # @schema skipProperties: true; additionalProperties: true
     runAsNonRoot: true
     runAsUser: 65532
     runAsGroup: 65532
     fsGroup: 65532
     seccompProfile:
       type: RuntimeDefault
-  containerSecurityContext: # @schema skipProperties: true; additionalProperties: true
+  containerSecurityContext:  # @schema skipProperties: true; additionalProperties: true
     allowPrivilegeEscalation: false
     capabilities:
       drop: [ALL]
@@ -224,10 +224,10 @@ pairingRelay:
   service:
     type: ClusterIP
     port: 5000
-    annotations: {} # @schema additionalProperties: true
-  podAnnotations: {} # @schema additionalProperties: true
-  podLabels: {} # @schema additionalProperties: true
-  resources: # @schema skipProperties: true; additionalProperties: true
+    annotations: {}  # @schema additionalProperties: true
+  podAnnotations: {}  # @schema additionalProperties: true
+  podLabels: {}  # @schema additionalProperties: true
+  resources:  # @schema skipProperties: true; additionalProperties: true
     requests:
       cpu: "50m"
       memory: "32Mi"
@@ -241,12 +241,12 @@ service:
   port: 3000
   healthPort: 8080
   metricsPort: 9102
-  annotations: {} # @schema additionalProperties: true
+  annotations: {}  # @schema additionalProperties: true
 
 serviceAccount:
   create: true
   name: ""
-  annotations: {} # @schema additionalProperties: true
+  annotations: {}  # @schema additionalProperties: true
 
 podDisruptionBudget:
   enabled: true
@@ -258,7 +258,7 @@ podDisruptionBudget:
 ingress:
   enabled: false
   className: ""
-  annotations: {} # @schema additionalProperties: true
+  annotations: {}  # @schema additionalProperties: true
   hosts: []                      # empty → derived from relayUrl
   tls: []                        # [{hosts: [...], secretName: "..."}]
 
@@ -289,14 +289,14 @@ persistence:
     storageClass: ""
     accessMode: ReadWriteOnce
     size: 10Gi                    # PVC capacity or emptyDir sizeLimit
-    annotations: {} # @schema additionalProperties: true
+    annotations: {}  # @schema additionalProperties: true
     existingClaim: ""
 
 # ── Postgres ─────────────────────────────────────────────────────────────────
 # Eval-only CloudPirates subchart. The relay's DATABASE_URL is composed in the
 # chart-managed Secret with a chart-generated password; auth.existingSecret
 # points this subchart at that same Secret/key so server and client agree.
-postgresql: # @schema skipProperties: true; additionalProperties: true
+postgresql:  # @schema skipProperties: true; additionalProperties: true
   enabled: false
   image:
     registry: gsoci.azurecr.io
@@ -318,7 +318,7 @@ externalPostgresql:
 # Eval-only CloudPirates subchart (standalone). REDIS_URL is composed in the
 # chart-managed Secret; auth.existingSecret points the subchart at that Secret
 # so the server password matches the URL the relay dials.
-redis: # @schema skipProperties: true; additionalProperties: true
+redis:  # @schema skipProperties: true; additionalProperties: true
   enabled: false
   image:
     registry: gsoci.azurecr.io
@@ -393,7 +393,7 @@ migrate:
   autoMigrate: true
   preUpgradeJob:
     enabled: false
-    resources: {} # @schema additionalProperties: true
+    resources: {}  # @schema additionalProperties: true
     backoffLimit: 3
     activeDeadlineSeconds: 600
 
@@ -403,7 +403,7 @@ serviceMonitor:
   namespace: ""
   interval: 30s
   scrapeTimeout: 10s
-  labels: {} # @schema additionalProperties: true
+  labels: {}  # @schema additionalProperties: true
 
 # ── Free-form extra manifests ────────────────────────────────────────────────
 extraManifests: []
