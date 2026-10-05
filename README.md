@@ -1,93 +1,72 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/buzz/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/buzz/tree/main)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/giantswarm/buzz/badge)](https://securityscorecards.dev/viewer/?uri=github.com/giantswarm/buzz)
 
-[Guide about how to manage an app on Giant Swarm](https://handbook.giantswarm.io/docs/dev-and-releng/app-developer-processes/adding_app_to_appcatalog/)
-
-## Creating a repository from this template
-
-A repository is created from this template by the repository set-up engine (`devctl`), which replaces the
-placeholders below, renames the chart directory `helm/buzz` and pushes the result as the first commit. When
-copying by hand, rename the chart directory and replace them yourself
-(`devctl replace -i 'buzz' <name> --ignore '.git/**' '**'`, likewise for the other two).
-
-| Placeholder | Where | Replaced with |
-|---|---|---|
-| `buzz` | the chart directory `helm/buzz`, `Chart.yaml`, `values.yaml`, `.abs/main.yaml`, `CHANGELOG.md`, this README | the repository name |
-| `bumblebee` | the `io.giantswarm.application.team` annotation in `Chart.yaml` | the owning team's short name, e.g. `shield` for team-shield |
-| `https://github.com/giantswarm/buzz` | this README | the upstream Helm repository the chart is based on |
-
-The tokens are braced, unlike `REPOSITORY_NAME` in the Go service template: a Go module path may not contain
-braces, so that template's token is brace-less. The engine's replacement pass handles both forms, so a repository
-is created from either template the same way; only when copying by hand does the pattern differ (`buzz`
-here, `REPOSITORY_NAME` there).
-
-The chart ships with the default Giant Swarm icon (`https://s.giantswarm.io/app-icons/giantswarm/1/light.svg`),
-so that the first build passes the icon checks. It is a default, not a placeholder: replace it with the app's
-own icon by adding it to [web-assets](https://github.com/giantswarm/web-assets) and setting the final URL as
-`icon` in `Chart.yaml`.
-
-Remove this section from the README of the created repository.
-
 # buzz chart
 
-Giant Swarm offers a buzz App which can be installed in workload clusters.
-Here, we define the buzz chart with its templates and default configuration.
+[Buzz](https://github.com/block/buzz) is a self-hostable workspace where people and AI agents share channels,
+repositories, workflows and huddles. Under the hood it is a Nostr relay: one Rust binary serving WebSocket, REST
+and the web UI, backed by PostgreSQL, Redis and S3-compatible object storage.
 
-**What is this app?**
+This repository packages upstream's Helm chart for the Giant Swarm app platform and publishes it to the
+`giantswarm` catalog and `oci://gsoci.azurecr.io/charts/giantswarm/buzz`.
 
-**Why did we add it?**
+## How the chart is built
 
-**Who can use it?**
+- `helm/buzz/templates` is upstream's `deploy/charts/buzz/templates`, vendored unchanged by
+  [vendir](https://carvel.dev/vendir/) at the ref in `vendir.yml`; the bundled Postgres and Redis subcharts
+  (CloudPirates) are vendored into `helm/buzz/charts`.
+- `helm/buzz/values.yaml` is upstream's `values.yaml` with every image on `gsoci.azurecr.io`, where
+  [retagger](https://github.com/giantswarm/retagger) mirrors them (`ghcr.io/block/buzz`, `ghcr.io/block/buzz-minio`,
+  `postgres`, `redis`), and `@schema` annotations for the generated `values.schema.json`.
+
+To move to a new upstream release: bump `ref` in `vendir.yml` (and the subchart versions if upstream's
+`Chart.yaml` changed them), run `vendir sync`, set `appVersion` in `helm/buzz/Chart.yaml` to the relay version,
+carry upstream's `values.yaml` changes over, and run `devctl gen precommit --language generic --repo-name buzz
+--flavors helmchart` to regenerate the schema. The relay tag has to be mirrored on gsoci first.
 
 ## Installing
 
-There are several ways to install this app onto a workload cluster.
+Two profiles, as upstream documents them:
 
-- [Using GitOps to instantiate the App](https://docs.giantswarm.io/tutorials/continuous-deployment/apps/add-appcr/)
-- By creating an [App resource](https://docs.giantswarm.io/reference/platform-api/crd/apps.application.giantswarm.io) using the platform API as explained in [Getting started with App Platform](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/).
+- **Production**: external PostgreSQL, Redis and S3 (`externalPostgresql`, `externalRedis`, `s3`), secrets in
+  `secrets.existingSecret`.
+- **Quickstart** (evaluation): `postgresql.enabled`, `redis.enabled` and `minio.enabled` bring the services up
+  in-cluster and the chart generates the relay secrets. `helm/buzz/ci/quickstart-values.yaml` is that profile.
+  The bundled MinIO image is `linux/amd64` only.
 
-## Configuring
-
-### values.yaml
-
-**This is an example of a values file you could upload using our web interface.**
-
-```yaml
-# values.yaml
-
-```
-
-### Sample App CR and ConfigMap for the management cluster
-
-If you have access to the Kubernetes API on the management cluster, you could create the App CR and ConfigMap directly.
-
-Here is an example that would install the app to workload cluster `abc12`:
+`relayUrl` (the public `wss://` URL) is always required, and `ownerPubkey` while
+`relay.requireRelayMembership` is true. A Flux `HelmRelease`:
 
 ```yaml
-# appCR.yaml
-
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: buzz
+  namespace: buzz
+spec:
+  interval: 10m
+  url: oci://gsoci.azurecr.io/charts/giantswarm/buzz
+  ref:
+    semver: ">=0.1.0 <1.0.0"
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: buzz
+  namespace: buzz
+spec:
+  interval: 10m
+  chartRef:
+    kind: OCIRepository
+    name: buzz
+  values:
+    relayUrl: wss://buzz.example.com
+    ownerPubkey: "<64-char hex Nostr pubkey>"
 ```
 
-```yaml
-# user-values-configmap.yaml
-
-```
-
-See our [full reference on how to configure apps](https://docs.giantswarm.io/tutorials/fleet-management/app-platform/app-configuration/) for more details.
-
-## Compatibility
-
-This app has been tested to work with the following workload cluster release versions:
-
-- _add release version_
-
-## Limitations
-
-Some apps have restrictions on how they can be deployed.
-Not following these limitations will most likely result in a broken deployment.
-
-- _add limitation_
+The relay answers on port 3000 (WebSocket, REST, web UI) and its health endpoints on 8080
+(`/_liveness`, `/_readiness`).
 
 ## Credit
 
-- https://github.com/giantswarm/buzz
+- https://github.com/block/buzz (Apache-2.0)

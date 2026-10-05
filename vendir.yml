@@ -1,0 +1,30 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: vendor
+  contents:
+  - path: buzz
+    git:
+      url: https://github.com/block/buzz
+      ref: relay-v0.2.1
+    includePaths:
+    - deploy/charts/buzz/**/*
+- path: helm/buzz/templates
+  contents:
+  - path: .
+    directory:
+      path: vendor/buzz/deploy/charts/buzz/templates
+- path: helm/buzz/charts
+  contents:
+  - path: postgres
+    helmChart:
+      name: postgres
+      version: "0.19.5"
+      repository:
+        url: oci://registry-1.docker.io/cloudpirates
+  - path: redis
+    helmChart:
+      name: redis
+      version: "0.30.3"
+      repository:
+        url: oci://registry-1.docker.io/cloudpirates

@@ -10,5 +10,6 @@
 # (@pytest.mark.functional); the upgrade scenario until a released chart
 # exists to upgrade from -- it needs --upgrade-tests-app-catalog-url or
 # --upgrade-tests-app-file, which a new repository has not got.
+app-tests-app-config-file: helm/buzz/ci/quickstart-values.yaml
 app-tests-deploy-namespace: default
 skip-steps: [functional, upgrade]
