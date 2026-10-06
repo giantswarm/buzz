@@ -150,7 +150,7 @@ An open source, in-memory data structure store used as a database, cache, and me
 | sentinel.enabled | bool | `false` |  |
 | sentinel.image.registry | string | `"docker.io"` |  |
 | sentinel.image.repository | string | `"redis"` |  |
-| sentinel.image.tag | string | `"8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d"` |  |
+| sentinel.image.tag | string | `"8.6.1@sha256:315270d166080f537bbdf1b489b603aaaa213cb55a544acfa51feb7481abb1c0"` |  |
 | sentinel.image.pullPolicy | string | `"Always"` |  |
 | sentinel.config.announceHostnames | bool | `true` |  |
 | sentinel.config.loglevel | string | `"notice"` |  |
