@@ -135,3 +135,16 @@ secrets.existingSecret, use that. Otherwise use the chart-managed one.
 {{ include "buzz.selectorLabels" . }}
 app.kubernetes.io/component: pairing-relay
 {{- end -}}
+
+{{/*
+Quickstart MinIO and mc images. Empty values select the chart's own
+multi-arch buzz-minio build, published with every chart release under the
+chart version.
+*/}}
+{{- define "buzz.minioImage" -}}
+{{- .Values.minio.image | default (printf "gsoci.azurecr.io/giantswarm/buzz-minio:%s" .Chart.Version) -}}
+{{- end -}}
+
+{{- define "buzz.mcImage" -}}
+{{- .Values.minio.mcImage | default (include "buzz.minioImage" .) -}}
+{{- end -}}

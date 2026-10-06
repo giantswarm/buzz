@@ -39,7 +39,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: mc
-          image: {{ .Values.minio.mcImage | quote }}
+          image: {{ include "buzz.mcImage" . | quote }}
           env:
             - name: S3_ACCESS_KEY
               valueFrom:

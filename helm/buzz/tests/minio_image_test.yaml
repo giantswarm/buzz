@@ -1,0 +1,53 @@
+suite: quickstart MinIO image
+templates:
+  - templates/quickstart-minio.yaml
+  - templates/quickstart-minio-init.yaml
+  - templates/deployment.yaml
+  - templates/secret-chart.yaml
+chart:
+  version: 1.2.3
+values:
+  - ../ci/quickstart-values.yaml
+tests:
+  - it: defaults the MinIO server to the chart's own build at the chart version
+    template: templates/quickstart-minio.yaml
+    documentSelector:
+      path: kind
+      value: Deployment
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+
+  - it: defaults the bucket init Job's mc to the same image
+    template: templates/quickstart-minio-init.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+
+  - it: defaults the relay's wait-for-bucket init container to the same image
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+
+  - it: lets mcImage follow an overridden image
+    template: templates/deployment.yaml
+    set:
+      minio.image: registry.example/minio:1
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: registry.example/minio:1
+
+  - it: keeps an explicit mcImage
+    template: templates/quickstart-minio-init.yaml
+    set:
+      minio.image: registry.example/minio:1
+      minio.mcImage: registry.example/mc:2
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.example/mc:2

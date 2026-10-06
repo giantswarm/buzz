@@ -5,6 +5,10 @@
 #   - chart-test: helm lint plus the helm-unittest suites in helm/buzz/tests/
 #     (`make helm-test`). The unittest plugin is not in the app-build-suite
 #     image, so the job runs in a plain container with a pinned helm.
+#   - push-buzz-minio-to-registries: the quickstart's MinIO + mc image
+#     (images/buzz-minio) for linux/amd64 and linux/arm64, tagged with the
+#     version the chart is stamped with, which minio.image defaults to. It
+#     runs on branches too, so the chart's branch smoke test finds its image.
 version: 2.1
 
 jobs:
@@ -31,6 +35,18 @@ workflows:
   build:
     jobs:
     - chart-test:
+        filters:
+          tags:
+            only: /^v.*/
+    - architect/push-to-registries:
+        context: architect
+        name: push-buzz-minio-to-registries
+        image: giantswarm/buzz-minio
+        build-context: ./images/buzz-minio
+        dockerfile: ./images/buzz-minio/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        # Nothing downstream reads .build_version; build-chart persists its own.
+        persist-build-version: false
         filters:
           tags:
             only: /^v.*/
