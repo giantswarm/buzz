@@ -41,7 +41,7 @@ Two profiles, as upstream documents them:
   chart-managed Secret.
 - **Quickstart** (evaluation): `postgresql.enabled`, `redis.enabled` and `minio.enabled` bring the services up
   in-cluster and the chart generates the relay secrets. `helm/buzz/ci/quickstart-values.yaml` is that profile.
-  The bundled MinIO image is `linux/amd64` only.
+  The bundled MinIO image runs on `linux/amd64` and `linux/arm64` nodes.
 
 `relayUrl` (the public `wss://` URL) is always required, and `ownerPubkey` while
 `relay.requireRelayMembership` is true. A Flux `HelmRelease`:
