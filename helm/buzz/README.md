@@ -174,6 +174,8 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | s3.addressingStyle | string | `"path"` |  |
 | s3.accessKey | string | `""` |  |
 | s3.secretKey | string | `""` |  |
+| s3.existingSecret.name | string | `""` |  |
+| s3.existingSecret.key | string | `"BUZZ_S3_SECRET_KEY"` |  |
 | minio.enabled | bool | `false` |  |
 | minio.image | string | `"gsoci.azurecr.io/giantswarm/buzz-minio:sha-99c2acf90cfbb1cb2d3a8bd900c0ec1642e20540-run-36021389137-1"` |  |
 | minio.mcImage | string | `"gsoci.azurecr.io/giantswarm/buzz-minio:sha-99c2acf90cfbb1cb2d3a8bd900c0ec1642e20540-run-36021389137-1"` |  |

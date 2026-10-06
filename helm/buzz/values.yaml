@@ -364,6 +364,12 @@ s3:
   addressingStyle: path
   accessKey: ""
   secretKey: ""
+  # Source BUZZ_S3_SECRET_KEY from an existing Secret instead of s3.secretKey
+  # or secrets.existingSecret; the chart-managed Secret then carries no S3
+  # secret key. External S3 only: not combinable with minio.enabled.
+  existingSecret:
+    name: ""
+    key: BUZZ_S3_SECRET_KEY
 
 # In-cluster MinIO for the quickstart profile only. Production deploys leave
 # this disabled and use s3.* (or secrets.existingSecret) against managed S3.
