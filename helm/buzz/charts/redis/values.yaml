@@ -252,7 +252,7 @@ volumePermissions:
   image:
     registry: docker.io
     repository: busybox
-    tag: "1.36.1"
+    tag: "1.38.0"
     pullPolicy: IfNotPresent
   ## @param volumePermissions.resources Resource limits and requests
   resources: {}
