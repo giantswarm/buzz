@@ -375,10 +375,11 @@ s3:
 # this disabled and use s3.* (or secrets.existingSecret) against managed S3.
 minio:
   enabled: false                 # quickstart: set true for bundled in-cluster MinIO
-  # Upstream's MinIO + mc build (linux/amd64 only); the MinIO images the
-  # upstream chart names are no longer served anonymously.
-  image: gsoci.azurecr.io/giantswarm/buzz-minio:sha-99c2acf90cfbb1cb2d3a8bd900c0ec1642e20540-run-36021389137-1
-  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:sha-99c2acf90cfbb1cb2d3a8bd900c0ec1642e20540-run-36021389137-1
+  # This repository's MinIO + mc build (images/buzz-minio, linux/amd64 and
+  # linux/arm64); the MinIO images the upstream chart names are no longer
+  # served anonymously.
+  image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.0-rc.1
+  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.0-rc.1
   persistence:
     enabled: true
     size: 10Gi
