@@ -2,7 +2,7 @@
 # MinIO Deployment, the bucket init Job and the relay's wait-for-bucket init
 # container. Built for linux/amd64 and linux/arm64 by the
 # push-buzz-minio-to-registries CircleCI job (.circleci/custom.yml) and tagged
-# with the chart version. The binaries are MinIO's checksummed official
+# with the release version. The binaries are MinIO's checksummed official
 # releases, the versions upstream's ghcr.io/block/buzz-minio carries.
 FROM gsoci.azurecr.io/giantswarm/alpine:3.24.2
 

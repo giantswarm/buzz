@@ -23,8 +23,8 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
   `@schema` annotations for the generated `values.schema.json`.
 - `images/buzz-minio` is the quickstart's MinIO + `mc` image, upstream's `ghcr.io/block/buzz-minio` for
   `linux/amd64` and `linux/arm64`. The `push-buzz-minio-to-registries` CI job (`.circleci/custom.yml`) publishes
-  it to `gsoci.azurecr.io/giantswarm/buzz-minio` under the chart version, which `minio.image` and
-  `minio.mcImage` default to.
+  it to `gsoci.azurecr.io/giantswarm/buzz-minio` with every release, under the release version; `minio.image`
+  and `minio.mcImage` pin one of those tags.
 
 To move to a new upstream release: bump `ref` in `vendir.yml` (and the subchart versions if upstream's
 `Chart.yaml` changed them), run `make sync-chart` (drop a patch upstream has taken), set `appVersion` in `helm/buzz/Chart.yaml` to the relay version,
@@ -41,7 +41,7 @@ Two profiles, as upstream documents them:
   chart-managed Secret.
 - **Quickstart** (evaluation): `postgresql.enabled`, `redis.enabled` and `minio.enabled` bring the services up
   in-cluster and the chart generates the relay secrets. `helm/buzz/ci/quickstart-values.yaml` is that profile.
-  The bundled MinIO image runs on `linux/amd64` and `linux/arm64` nodes.
+  The bundled MinIO image is `linux/amd64` only.
 
 `relayUrl` (the public `wss://` URL) is always required, and `ownerPubkey` while
 `relay.requireRelayMembership` is true. A Flux `HelmRelease`:

@@ -64,7 +64,7 @@ spec:
       # CrashLoopBackOff (with growing backoff) until the bucket appears. Block
       # relay start until the bucket exists — deterministic, no crash-loops.
         - name: wait-for-bucket
-          image: {{ include "buzz.mcImage" . | quote }}
+          image: {{ .Values.minio.mcImage | quote }}
           securityContext:
             {{- toYaml .Values.relay.containerSecurityContext | nindent 12 }}
           env:

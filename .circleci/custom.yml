@@ -7,8 +7,8 @@
 #     image, so the job runs in a plain container with a pinned helm.
 #   - push-buzz-minio-to-registries: the quickstart's MinIO + mc image
 #     (images/buzz-minio) for linux/amd64 and linux/arm64, tagged with the
-#     version the chart is stamped with, which minio.image defaults to. It
-#     runs on branches too, so the chart's branch smoke test finds its image.
+#     release version; minio.image pins a released tag. Branch builds prove
+#     the image builds for both platforms.
 version: 2.1
 
 jobs:
