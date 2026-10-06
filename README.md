@@ -69,6 +69,18 @@ spec:
     ownerPubkey: "<64-char hex Nostr pubkey>"
 ```
 
+The relay serves its bundled web UI at `/` only when `BUZZ_SERVE_GIT_WEB_GUI` is `true` or `1` (off by
+default; a browser at `/` then gets the NIP-11 JSON). The chart has no value for it yet
+([#20](https://github.com/giantswarm/buzz/issues/20)), so when the relay is exposed to browsers set it through
+`relay.extraEnv`:
+
+```yaml
+relay:
+  extraEnv:
+    - name: BUZZ_SERVE_GIT_WEB_GUI
+      value: "true"
+```
+
 The relay answers on port 3000 (WebSocket, REST, web UI) and its health endpoints on 8080
 (`/_liveness`, `/_readiness`).
 
