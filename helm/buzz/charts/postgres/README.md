@@ -39,7 +39,7 @@ The World's Most Advanced Open Source Relational Database
 | terminationGracePeriodSeconds | int | `30` |  |
 | image.registry | string | `"docker.io"` |  |
 | image.repository | string | `"postgres"` |  |
-| image.tag | string | `"18.4@sha256:8ff36f3c66371cba71d20ceedccfc3de9669a68737607888c4ef0af93abe8e39"` |  |
+| image.tag | string | `"18.4@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"` |  |
 | image.imagePullPolicy | string | `"Always"` |  |
 | image.useHardenedImage | bool | `false` |  |
 | replicaCount | int | `1` |  |
