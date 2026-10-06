@@ -500,6 +500,18 @@
                 "endpoint": {
                     "type": "string"
                 },
+                "existingSecret": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "key": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "region": {
                     "type": "string"
                 },

@@ -12,15 +12,18 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
 
 ## How the chart is built
 
-- `helm/buzz/templates` is upstream's `deploy/charts/buzz/templates`, vendored unchanged by
-  [vendir](https://carvel.dev/vendir/) at the ref in `vendir.yml`; the bundled Postgres and Redis subcharts
-  (CloudPirates) are vendored into `helm/buzz/charts`.
+- `helm/buzz/templates` is upstream's `deploy/charts/buzz/templates`, vendored by
+  [vendir](https://carvel.dev/vendir/) at the ref in `vendir.yml` with the upstream-ready patches in `patches/`
+  applied on top (`make sync-chart` does both); the bundled Postgres and Redis subcharts (CloudPirates) are
+  vendored into `helm/buzz/charts`.
+- `helm/buzz/tests` holds the chart's helm-unittest suites; `make helm-test` runs them with `helm lint`, as the
+  `chart-test` CI job does.
 - `helm/buzz/values.yaml` is upstream's `values.yaml` with every image on `gsoci.azurecr.io`, where
   [retagger](https://github.com/giantswarm/retagger) mirrors them (`ghcr.io/block/buzz`, `ghcr.io/block/buzz-minio`,
   `postgres`, `redis`), and `@schema` annotations for the generated `values.schema.json`.
 
 To move to a new upstream release: bump `ref` in `vendir.yml` (and the subchart versions if upstream's
-`Chart.yaml` changed them), run `vendir sync`, set `appVersion` in `helm/buzz/Chart.yaml` to the relay version,
+`Chart.yaml` changed them), run `make sync-chart` (drop a patch upstream has taken), set `appVersion` in `helm/buzz/Chart.yaml` to the relay version,
 carry upstream's `values.yaml` changes over, and run `devctl gen precommit --language generic --repo-name buzz
 --flavors helmchart` to regenerate the schema. The relay tag has to be mirrored on gsoci first.
 
@@ -29,7 +32,9 @@ carry upstream's `values.yaml` changes over, and run `devctl gen precommit --lan
 Two profiles, as upstream documents them:
 
 - **Production**: external PostgreSQL, Redis and S3 (`externalPostgresql`, `externalRedis`, `s3`), secrets in
-  `secrets.existingSecret`.
+  `secrets.existingSecret`. When only the S3 secret key lives in a Secret of its own, `s3.existingSecret`
+  (`name`, `key`, default key `BUZZ_S3_SECRET_KEY`) points the relay at it and keeps it out of the
+  chart-managed Secret.
 - **Quickstart** (evaluation): `postgresql.enabled`, `redis.enabled` and `minio.enabled` bring the services up
   in-cluster and the chart generates the relay secrets. `helm/buzz/ci/quickstart-values.yaml` is that profile.
   The bundled MinIO image is `linux/amd64` only.
