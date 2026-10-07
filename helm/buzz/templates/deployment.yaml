@@ -214,9 +214,14 @@ spec:
             - name: BUZZ_S3_SECRET_KEY
               valueFrom:
                 secretKeyRef:
+                  {{- with .Values.s3.existingSecret.name }}
+                  name: {{ . }}
+                  key: {{ $.Values.s3.existingSecret.key | default "BUZZ_S3_SECRET_KEY" }}
+                  {{- else }}
                   name: {{ include "buzz.envSecretName" . }}
                   key: BUZZ_S3_SECRET_KEY
                   optional: true
+                  {{- end }}
 
             - name: BUZZ_HUDDLE_AUDIO_AVAILABLE
               value: {{ include "buzz.huddleAudioAvailable" . | quote }}
