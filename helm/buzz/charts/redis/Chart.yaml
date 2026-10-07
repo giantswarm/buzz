@@ -25,7 +25,7 @@ appVersion: 8.8.0
 dependencies:
 - name: common
   repository: oci://registry-1.docker.io/cloudpirates
-  version: 2.2.0
+  version: 2.2.1
 description: An open source, in-memory data structure store used as a database, cache,
   and message broker.
 home: https://www.redis.io
