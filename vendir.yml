@@ -25,6 +25,6 @@ directories:
   - path: redis
     helmChart:
       name: redis
-      version: "0.30.3"
+      version: "0.37.2"
       repository:
         url: oci://registry-1.docker.io/cloudpirates
