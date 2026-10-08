@@ -11,11 +11,11 @@ directories:
 - contents:
   - directory: {}
     path: .
-  path: helm/buzz/templates/upstream
+  path: helm/buzz/templates
 - contents:
   - helmChart:
-      appVersion: 18.4.0
-      version: 0.19.5
+      appVersion: 18.6.0
+      version: 0.21.2
     path: postgres
   - helmChart:
       appVersion: 8.8.0

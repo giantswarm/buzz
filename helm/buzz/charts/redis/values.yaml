@@ -26,7 +26,7 @@ image:
   ## @param image.repository Redis image repository
   repository: redis
   ## @param image.tag Redis image tag
-  tag: "8.10.2@sha256:2c2dff791878316e3b083188be0d578423b24813cdda5de0e80ea4f7b3e6bfd6"
+  tag: "8.8.0@sha256:aa049e689e141a4358ad1d4562dc49c88a89fbab711fd8fcc33f684c80b26301"
   ## @param image.pullPolicy Redis image pull policy
   pullPolicy: Always
 
@@ -252,7 +252,7 @@ volumePermissions:
   image:
     registry: docker.io
     repository: busybox
-    tag: "1.38.0"
+    tag: "1.36.1"
     pullPolicy: IfNotPresent
   ## @param volumePermissions.resources Resource limits and requests
   resources: {}
@@ -417,7 +417,7 @@ sentinel:
   image:
     registry: docker.io
     repository: redis
-    tag: "8.10.2@sha256:2c2dff791878316e3b083188be0d578423b24813cdda5de0e80ea4f7b3e6bfd6"
+    tag: "8.6.1@sha256:1c054d54ecd1597bba52f4304bca5afbc5565ebe614c5b3d7dc5b7f8a0cd768d"
     pullPolicy: Always
   ## @param sentinel.config.announceHostnames Use the hostnames instead of the IP in "announce-ip" commands
   ## @param sentinel.config.loglevel Sentinel log level. Allowed values: debug, verbose, notice, warning
@@ -488,7 +488,7 @@ sentinel:
     ## @param sentinel.masterService.image.repository Image for master discovery deployment
     image:
       repository: alpine/kubectl
-      tag: "1.37.1"
+      tag: "1.35.2"
       pullPolicy: IfNotPresent
     ## @param sentinel.masterService.resources Resource limits and requests for master discovery deployment
     resources: {}
@@ -561,7 +561,7 @@ metrics:
   image:
     registry: docker.io
     repository: oliver006/redis_exporter
-    tag: "v1.93.0-alpine@sha256:93831cd4d5d67687de67c9d5221b14312fea580af8d157583ed9d4459bf2dd70"
+    tag: "v1.82.0-alpine@sha256:da9e89ee4e755bfa1b6a6b2ed345c2de63ca3976f95c9f1e9538882bc1414cb8"
     pullPolicy: Always
   ## @param metrics.resources Resource limits and requests for metrics container
   resources: {}
