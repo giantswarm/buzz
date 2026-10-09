@@ -162,7 +162,7 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | redis.enabled | bool | `false` |  |
 | redis.image.registry | string | `"gsoci.azurecr.io"` |  |
 | redis.image.repository | string | `"giantswarm/redis"` |  |
-| redis.image.tag | string | `"8.8.0"` |  |
+| redis.image.tag | string | `"8.10.2"` |  |
 | redis.auth.existingSecret | string | `"{{ if contains \"buzz\" .Release.Name }}{{ .Release.Name }}-relay{{ else }}{{ .Release.Name }}-buzz-relay{{ end }}"` |  |
 | redis.auth.existingSecretPasswordKey | string | `"redis-password"` |  |
 | redis.persistence.enabled | bool | `true` |  |

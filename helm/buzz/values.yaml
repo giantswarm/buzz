@@ -323,7 +323,7 @@ redis:  # @schema skipProperties: true; additionalProperties: true
   image:
     registry: gsoci.azurecr.io
     repository: giantswarm/redis
-    tag: "8.8.0"
+    tag: "8.10.2"
   auth:
     existingSecret: '{{ if contains "buzz" .Release.Name }}{{ .Release.Name }}-relay{{ else }}{{ .Release.Name }}-buzz-relay{{ end }}'
     existingSecretPasswordKey: redis-password
