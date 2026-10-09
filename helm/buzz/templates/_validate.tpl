@@ -75,23 +75,10 @@ surface at template time regardless of which manifest helm renders first.
   {{- fail "Postgres source missing: enable postgresql.enabled=true, set externalPostgresql.url, or provide secrets.existingSecret with key DATABASE_URL." -}}
 {{- end -}}
 
-{{/* S3 / object-storage source must exist somewhere. With the default
-     BUZZ_GIT_CONFORMANCE_PROBE behavior, an unreachable bucket is detected
-     before the relay opens its listener; operators can explicitly disable that
-     startup gate. */}}
+{{/* S3 / object-storage source must exist somewhere (relay hard-fails its
+     startup conformance probe without a reachable bucket). */}}
 {{- if not (or .Values.minio.enabled .Values.s3.endpoint .Values.secrets.existingSecret) -}}
-  {{- fail "S3/object-storage source missing: enable minio.enabled=true (quickstart in-cluster), set s3.endpoint + s3.bucket + credentials, or provide secrets.existingSecret with keys BUZZ_S3_ACCESS_KEY + BUZZ_S3_SECRET_KEY. By default the relay runs a startup S3 conformance probe and exits if storage is unreachable; disabling BUZZ_GIT_CONFORMANCE_PROBE also removes that startup storage check." -}}
-{{- end -}}
-
-{{/* s3.existingSecret supplies the external S3 secret key; the bundled MinIO
-     generates its own credentials and s3.secretKey would be a second source. */}}
-{{- if .Values.s3.existingSecret.name -}}
-  {{- if .Values.minio.enabled -}}
-    {{- fail "s3.existingSecret is for external S3 and cannot be combined with minio.enabled=true, whose credentials the chart generates." -}}
-  {{- end -}}
-  {{- if .Values.s3.secretKey -}}
-    {{- fail "s3.secretKey and s3.existingSecret.name are mutually exclusive — set one." -}}
-  {{- end -}}
+  {{- fail "S3/object-storage source missing: enable minio.enabled=true (quickstart in-cluster), set s3.endpoint + s3.bucket + credentials, or provide secrets.existingSecret with keys BUZZ_S3_ACCESS_KEY + BUZZ_S3_SECRET_KEY. The relay runs a startup S3 conformance probe and exits if storage is unreachable." -}}
 {{- end -}}
 
 {{- end -}}

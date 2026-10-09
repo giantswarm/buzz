@@ -2,16 +2,16 @@ apiVersion: vendir.k14s.io/v1alpha1
 directories:
 - contents:
   - git:
-      commitTitle: 'chore(release): release Buzz Relay version 0.2.1 (#2856)...'
-      sha: 6e5c462ac524de60d7edb46c66130fd779cc9006
+      commitTitle: 'chore(release): release Buzz Desktop version 0.5.2 (#3624)...'
+      sha: 3e48f1b2365d326ee1c9582448d86a99b44ecd5d
       tags:
-      - relay-v0.2.1
+      - v0.5.2
     path: buzz
   path: vendor
 - contents:
   - directory: {}
     path: .
-  path: helm/buzz/templates/upstream
+  path: helm/buzz/templates
 - contents:
   - helmChart:
       appVersion: 18.6.0
