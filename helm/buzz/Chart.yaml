@@ -48,6 +48,6 @@ dependencies:
   condition: postgresql.enabled
   alias: postgresql
 - name: redis
-  version: 0.30.3
+  version: 0.37.2
   repository: file://charts/redis
   condition: redis.enabled

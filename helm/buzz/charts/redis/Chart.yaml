@@ -2,10 +2,11 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] Fix appVersion set to `v8.8.8` instead of `v8.8.0` (#1374)'
+      description: '[redis] Honour sentinel.config.announceHostnames in the Sentinel container
+        (#1813)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1374
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1813
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -21,7 +22,7 @@ annotations:
     url: https://raw.githubusercontent.com/CloudPirates-io/helm-charts/refs/heads/main/cosign.pub
   license: Apache-2.0
 apiVersion: v2
-appVersion: 8.8.0
+appVersion: 8.10.2
 dependencies:
 - name: common
   repository: oci://registry-1.docker.io/cloudpirates
@@ -46,4 +47,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.30.3
+version: 0.37.2

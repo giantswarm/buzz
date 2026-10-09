@@ -14,7 +14,7 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | Repository | Name | Version |
 |------------|------|---------|
 | file://charts/postgres | postgresql(postgres) | 0.21.2 |
-| file://charts/redis | redis | 0.30.3 |
+| file://charts/redis | redis | 0.37.2 |
 
 ## Values
 
@@ -151,7 +151,7 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | postgresql.enabled | bool | `false` |  |
 | postgresql.image.registry | string | `"gsoci.azurecr.io"` |  |
 | postgresql.image.repository | string | `"giantswarm/postgres"` |  |
-| postgresql.image.tag | string | `"18.4"` |  |
+| postgresql.image.tag | string | `"18.6"` |  |
 | postgresql.auth.database | string | `"buzz"` |  |
 | postgresql.auth.username | string | `"buzz"` |  |
 | postgresql.auth.existingSecret | string | `"{{ if contains \"buzz\" .Release.Name }}{{ .Release.Name }}-relay{{ else }}{{ .Release.Name }}-buzz-relay{{ end }}"` |  |
