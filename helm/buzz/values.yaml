@@ -301,7 +301,7 @@ postgresql:  # @schema skipProperties: true; additionalProperties: true
   image:
     registry: gsoci.azurecr.io
     repository: giantswarm/postgres
-    tag: "18.4"
+    tag: "18.6"
   auth:
     database: buzz
     username: buzz
