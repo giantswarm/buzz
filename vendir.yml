@@ -19,7 +19,7 @@ directories:
   - path: postgres
     helmChart:
       name: postgres
-      version: "0.19.5"
+      version: "0.21.2"
       repository:
         url: oci://registry-1.docker.io/cloudpirates
   - path: redis
