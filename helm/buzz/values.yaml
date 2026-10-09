@@ -378,8 +378,8 @@ minio:
   # This repository's MinIO + mc build (images/buzz-minio, linux/amd64 and
   # linux/arm64); the MinIO images the upstream chart names are no longer
   # served anonymously.
-  image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.0-rc.1
-  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.0-rc.1
+  image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.1-rc.1
+  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.1-rc.1
   persistence:
     enabled: true
     size: 10Gi
