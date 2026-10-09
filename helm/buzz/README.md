@@ -13,8 +13,8 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 
 | Repository | Name | Version |
 |------------|------|---------|
-| file://charts/postgres | postgresql(postgres) | 0.19.5 |
-| file://charts/redis | redis | 0.30.3 |
+| file://charts/postgres | postgresql(postgres) | 0.21.2 |
+| file://charts/redis | redis | 0.37.2 |
 
 ## Values
 

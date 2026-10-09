@@ -43,11 +43,11 @@ annotations:
 # by vendir.yml; production installs leave both disabled.
 dependencies:
 - name: postgres
-  version: 0.19.5
+  version: 0.21.2
   repository: file://charts/postgres
   condition: postgresql.enabled
   alias: postgresql
 - name: redis
-  version: 0.30.3
+  version: 0.37.2
   repository: file://charts/redis
   condition: redis.enabled
