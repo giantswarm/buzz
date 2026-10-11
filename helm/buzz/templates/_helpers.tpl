@@ -104,9 +104,10 @@ secrets.existingSecret, use that. Otherwise use the chart-managed one.
 {{- end -}}
 
 {{/* Quickstart MinIO and mc images: minio.image / minio.mcImage when set,
-     otherwise the chart's own buzz-minio build at the chart's version. */}}
+     otherwise the chart's own buzz-minio build at the chart's version, without
+     build metadata: Flux's OCIRepository sets 0.3.2+<digest>, not a valid tag. */}}
 {{- define "buzz.minioReleaseImage" -}}
-{{- printf "%s:%s" .Values.minio.repository .Chart.Version -}}
+{{- printf "%s:%s" .Values.minio.repository (split "+" .Chart.Version)._0 -}}
 {{- end -}}
 
 {{- define "buzz.minioImage" -}}

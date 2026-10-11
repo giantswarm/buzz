@@ -52,3 +52,21 @@ tests:
           path: spec.template.spec.initContainers[0].image
           value: registry.example.com/mc:y
         template: templates/deployment.yaml
+
+  - it: drops the build metadata Flux's OCIRepository appends to the chart version
+    chart:
+      version: 1.2.3+3f9e30cedf37
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+        template: templates/quickstart-minio.yaml
+        documentIndex: 0
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+        template: templates/quickstart-minio-init.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+        template: templates/deployment.yaml
