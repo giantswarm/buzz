@@ -14,5 +14,14 @@
       extractVersion: '^relay-v(?<version>.+)$',
       versioning: 'semver',
     },
+    {
+      // helm/buzz/charts and helm/buzz/templates are vendir's: every vendir
+      // bump runs `make sync-chart` (.github/workflows/vendir-sync.yaml),
+      // which resets them to the pinned upstream. An image bump inside them
+      // would be reverted by the next sync, so they move only with vendir.yml.
+      description: 'vendored chart trees: updated through vendir.yml only',
+      matchFileNames: ['helm/buzz/charts/**', 'helm/buzz/templates/**'],
+      enabled: false,
+    },
   ],
 }
