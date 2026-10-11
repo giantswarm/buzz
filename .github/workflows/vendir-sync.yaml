@@ -1,0 +1,95 @@
+# Completes Renovate's vendir bumps: on a renovate/vendir/ branch it runs
+# `make sync-chart` and the helm-docs hook and pushes the result back onto the
+# branch.
+#
+# Why: Renovate's vendir manager runs a bare `vendir sync`, which resets
+# helm/buzz/templates to upstream (dropping patches/*.patch), deletes the
+# packaged charts/*.tgz and leaves the file:// dependency versions in
+# Chart.yaml, Chart.lock and the README at the old version. The Mend-hosted
+# Renovate app cannot run postUpgradeTasks, so the repo finishes the bump here,
+# the same way devctl's helm-docs-regen workflow regenerates READMEs.
+#
+# How it stays safe:
+#   * `make sync-chart` is a fixed point: on a branch that is already in sync
+#     it changes nothing, so the run the push triggers exits without pushing.
+#   * A patch that no longer applies fails `make sync-chart` and nothing is
+#     pushed; the PR stays red until a person refreshes the patch.
+#   * The push uses the taylorbot PAT, not GITHUB_TOKEN, so the required checks
+#     run on the new head; renovate.json5 lists its author in gitIgnoredAuthors
+#     and Renovate keeps rebasing the branch as its own.
+name: vendir-sync
+
+on:
+  pull_request:
+    paths:
+      - 'vendir.yml'
+      - 'vendir.lock.yml'
+
+permissions: {}
+
+concurrency:
+  group: vendir-sync-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  HELM_VERSION: v3.19.0
+  VENDIR_VERSION: v0.46.2
+  HELM_DOCS_VERSION: "1.14.2"
+
+jobs:
+  sync:
+    name: Sync the vendored chart and push
+    if: startsWith(github.head_ref, 'renovate/vendir/') && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the PR branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
+          # The PAT is kept in the checkout so `git push` below uses it.
+          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
+      - name: Install helm and vendir
+        run: |
+          set -euo pipefail
+          curl -sSL "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" | tar -xz -C /tmp
+          sudo install -m 0755 /tmp/linux-amd64/helm /usr/local/bin/helm
+          curl -sSL -o /tmp/vendir "https://github.com/carvel-dev/vendir/releases/download/${VENDIR_VERSION}/vendir-linux-amd64"
+          sudo install -m 0755 /tmp/vendir /usr/local/bin/vendir
+          helm version --short
+          vendir version
+      - name: Install helm-docs
+        uses: giantswarm/install-binary-action@5bef88f65012037dd836117c8d344b21bb559854 # v4.1.0
+        with:
+          binary: helm-docs
+          version: "${{ env.HELM_DOCS_VERSION }}"
+          download_url: "https://github.com/norwoodj/helm-docs/releases/download/v${version}/helm-docs_${version}_Linux_x86_64.tar.gz"
+          tarball_binary_path: "helm-docs"
+          smoke_test: "${binary} --version"
+      - name: Set up Python environment
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - name: Install pre-commit
+        run: python -m pip install pre-commit
+      - name: Sync the vendored chart
+        run: make sync-chart
+      - name: Regenerate the README
+        run: |
+          set -euo pipefail
+          # The first pass may rewrite the README, the second has to be clean.
+          pre-commit run helm-docs --all-files || true
+          pre-commit run helm-docs --all-files
+      - name: Set up git identity
+        run: |
+          git config --local user.email "dev@giantswarm.io"
+          git config --local user.name "taylorbot"
+      - name: Commit and push the synced chart
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "vendored chart already in sync, nothing to push"
+            exit 0
+          fi
+          git add -A
+          git commit -m "chore(helm): sync the vendored chart for the vendir bump"
+          git push

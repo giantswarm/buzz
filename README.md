@@ -14,8 +14,10 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
 
 - `helm/buzz/templates` is upstream's `deploy/charts/buzz/templates`, vendored by
   [vendir](https://carvel.dev/vendir/) at the ref in `vendir.yml` with the upstream-ready patches in `patches/`
-  applied on top (`make sync-chart` does both); the bundled Postgres and Redis subcharts (CloudPirates) are
-  vendored into `helm/buzz/charts`.
+  applied on top; the bundled Postgres and Redis subcharts (CloudPirates) are vendored into `helm/buzz/charts`.
+  `make sync-chart` syncs, applies the patches and sets `Chart.yaml`, `Chart.lock` and `charts/*.tgz` to the
+  vendored subchart versions; on Renovate's vendir bumps the `vendir-sync` workflow runs it and pushes the result.
+  Renovate leaves the vendored trees alone otherwise: they move with `vendir.yml` only.
 - `helm/buzz/tests` holds the chart's helm-unittest suites; `make helm-test` runs them with `helm lint`, as the
   `chart-test` CI job does.
 - `helm/buzz/values.yaml` is upstream's `values.yaml` with every image on `gsoci.azurecr.io`, where
