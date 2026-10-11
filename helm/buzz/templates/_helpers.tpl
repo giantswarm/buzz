@@ -103,6 +103,20 @@ secrets.existingSecret, use that. Otherwise use the chart-managed one.
 {{- printf "http://%s.%s.svc.cluster.local:9000" (include "buzz.minioFullname" .) .Release.Namespace -}}
 {{- end -}}
 
+{{/* Quickstart MinIO and mc images: minio.image / minio.mcImage when set,
+     otherwise the chart's own buzz-minio build at the chart's version. */}}
+{{- define "buzz.minioReleaseImage" -}}
+{{- printf "%s:%s" .Values.minio.repository .Chart.Version -}}
+{{- end -}}
+
+{{- define "buzz.minioImage" -}}
+{{- default (include "buzz.minioReleaseImage" .) .Values.minio.image -}}
+{{- end -}}
+
+{{- define "buzz.minioMcImage" -}}
+{{- default (include "buzz.minioReleaseImage" .) .Values.minio.mcImage -}}
+{{- end -}}
+
 {{/* Minimum number of relay replicas the release can run. */}}
 {{- define "buzz.minimumReplicas" -}}
 {{- if .Values.autoscaling.enabled -}}

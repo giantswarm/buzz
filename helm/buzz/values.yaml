@@ -376,10 +376,13 @@ s3:
 minio:
   enabled: false                 # quickstart: set true for bundled in-cluster MinIO
   # This repository's MinIO + mc build (images/buzz-minio, linux/amd64 and
-  # linux/arm64); the MinIO images the upstream chart names are no longer
-  # served anonymously.
-  image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.1-rc.1
-  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.1-rc.1
+  # linux/arm64), pushed under the chart's version by every release; the MinIO
+  # images the upstream chart names are no longer served anonymously. Left
+  # empty, image and mcImage are `<repository>:<chart version>`, the build of
+  # the chart's own release; a full image reference overrides either.
+  repository: gsoci.azurecr.io/giantswarm/buzz-minio
+  image: ""
+  mcImage: ""
   persistence:
     enabled: true
     size: 10Gi

@@ -1,0 +1,54 @@
+suite: minio images
+templates:
+  - templates/quickstart-minio.yaml
+  - templates/quickstart-minio-init.yaml
+  - templates/deployment.yaml
+  - templates/secret-chart.yaml
+chart:
+  version: 1.2.3
+set:
+  relayUrl: wss://buzz.example.com
+  ownerPubkey: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  externalPostgresql.url: postgres://buzz@postgres:5432/buzz
+  minio.enabled: true
+tests:
+  - it: runs the chart's own buzz-minio at the chart version by default
+    template: templates/quickstart-minio.yaml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+
+  - it: creates the bucket with mc from that image by default
+    template: templates/quickstart-minio-init.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+
+  - it: waits for the bucket with mc from that image by default
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: gsoci.azurecr.io/giantswarm/buzz-minio:1.2.3
+
+  - it: takes explicit minio.image and minio.mcImage references
+    set:
+      minio.image: registry.example.com/minio:x
+      minio.mcImage: registry.example.com/mc:y
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.example.com/minio:x
+        template: templates/quickstart-minio.yaml
+        documentIndex: 0
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.example.com/mc:y
+        template: templates/quickstart-minio-init.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: registry.example.com/mc:y
+        template: templates/deployment.yaml

@@ -1,0 +1,64 @@
+diff --git a/helm/buzz/templates/_helpers.tpl b/helm/buzz/templates/_helpers.tpl
+index ff07037..6b58126 100644
+--- a/helm/buzz/templates/_helpers.tpl
++++ b/helm/buzz/templates/_helpers.tpl
+@@ -103,6 +103,20 @@ secrets.existingSecret, use that. Otherwise use the chart-managed one.
+ {{- printf "http://%s.%s.svc.cluster.local:9000" (include "buzz.minioFullname" .) .Release.Namespace -}}
+ {{- end -}}
+ 
++{{/* Quickstart MinIO and mc images: minio.image / minio.mcImage when set,
++     otherwise the chart's own buzz-minio build at the chart's version. */}}
++{{- define "buzz.minioReleaseImage" -}}
++{{- printf "%s:%s" .Values.minio.repository .Chart.Version -}}
++{{- end -}}
++
++{{- define "buzz.minioImage" -}}
++{{- default (include "buzz.minioReleaseImage" .) .Values.minio.image -}}
++{{- end -}}
++
++{{- define "buzz.minioMcImage" -}}
++{{- default (include "buzz.minioReleaseImage" .) .Values.minio.mcImage -}}
++{{- end -}}
++
+ {{/* Minimum number of relay replicas the release can run. */}}
+ {{- define "buzz.minimumReplicas" -}}
+ {{- if .Values.autoscaling.enabled -}}
+diff --git a/helm/buzz/templates/deployment.yaml b/helm/buzz/templates/deployment.yaml
+index 0a719f5..a2ef351 100644
+--- a/helm/buzz/templates/deployment.yaml
++++ b/helm/buzz/templates/deployment.yaml
+@@ -64,7 +64,7 @@ spec:
+       # CrashLoopBackOff (with growing backoff) until the bucket appears. Block
+       # relay start until the bucket exists — deterministic, no crash-loops.
+         - name: wait-for-bucket
+-          image: {{ .Values.minio.mcImage | quote }}
++          image: {{ include "buzz.minioMcImage" . | quote }}
+           securityContext:
+             {{- toYaml .Values.relay.containerSecurityContext | nindent 12 }}
+           env:
+diff --git a/helm/buzz/templates/quickstart-minio-init.yaml b/helm/buzz/templates/quickstart-minio-init.yaml
+index f1c0027..cc2c9d5 100644
+--- a/helm/buzz/templates/quickstart-minio-init.yaml
++++ b/helm/buzz/templates/quickstart-minio-init.yaml
+@@ -39,7 +39,7 @@ spec:
+       restartPolicy: OnFailure
+       containers:
+         - name: mc
+-          image: {{ .Values.minio.mcImage | quote }}
++          image: {{ include "buzz.minioMcImage" . | quote }}
+           env:
+             - name: S3_ACCESS_KEY
+               valueFrom:
+diff --git a/helm/buzz/templates/quickstart-minio.yaml b/helm/buzz/templates/quickstart-minio.yaml
+index 9685a7f..424ee79 100644
+--- a/helm/buzz/templates/quickstart-minio.yaml
++++ b/helm/buzz/templates/quickstart-minio.yaml
+@@ -30,7 +30,7 @@ spec:
+     spec:
+       containers:
+         - name: minio
+-          image: {{ .Values.minio.image | quote }}
++          image: {{ include "buzz.minioImage" . | quote }}
+           args: ["server", "/data", "--console-address", ":9001"]
+           env:
+             - name: MINIO_ROOT_USER
