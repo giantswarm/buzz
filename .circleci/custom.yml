@@ -8,11 +8,12 @@
 #   - push-buzz-minio-to-registries: the quickstart's MinIO + mc image
 #     (images/buzz-minio) for linux/amd64 and linux/arm64, tagged with the
 #     release version, which the chart's minio.image and minio.mcImage default
-#     to. Tags only, like the chart push: a main build after a release sits on
-#     the tagged commit, where architect refuses to publish the release version
-#     again. The tag build pushes to gsoci only (split-china-push);
-#     sync-china-registry copies the release to the Aliyun mirror from the
-#     in-China runner, so no push crosses the Pacific.
+#     to. Branch builds prove the image builds for both platforms; main and
+#     the release branches skip it like build-chart does: after a release
+#     their head is the tagged commit, where architect refuses to publish the
+#     release version again. The tag build pushes to gsoci only
+#     (split-china-push); sync-china-registry copies the release to the
+#     Aliyun mirror from the in-China runner, so no push crosses the Pacific.
 version: 2.1
 
 jobs:
@@ -56,7 +57,9 @@ workflows:
           tags:
             only: /^v.*/
           branches:
-            ignore: /.*/
+            ignore:
+            - main
+            - /^release-v?[0-9]+(\.[0-9]+)?\.x$/
     - architect/sync-china-registry:
         context: architect
         name: sync-buzz-minio-to-china-registry

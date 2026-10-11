@@ -8,8 +8,9 @@ redis:
   enabled: true
 minio:
   enabled: true
-  # The chart defaults both to the buzz-minio of its own version, which only a
-  # tag build pushes; a branch's kind deploy runs the latest release's build.
+  # The chart defaults both to the buzz-minio of its own version; a branch's
+  # is pushed by a job the kind deploy does not wait for, so the deploy runs
+  # the latest release's build.
   image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.1
   mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.1
 relayUrl: wss://buzz.test.local
