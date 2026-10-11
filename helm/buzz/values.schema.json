@@ -243,6 +243,9 @@
                             "type": "string"
                         }
                     }
+                },
+                "repository": {
+                    "type": "string"
                 }
             }
         },

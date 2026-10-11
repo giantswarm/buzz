@@ -13,8 +13,8 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
 ## How the chart is built
 
 - `helm/buzz/templates` is upstream's `deploy/charts/buzz/templates`, vendored by
-  [vendir](https://carvel.dev/vendir/) at the ref in `vendir.yml` with the upstream-ready patches in `patches/`
-  applied on top; the bundled Postgres and Redis subcharts (CloudPirates) are vendored into `helm/buzz/charts`.
+  [vendir](https://carvel.dev/vendir/) at the ref in `vendir.yml` with the patches in `patches/` applied on
+  top; the bundled Postgres and Redis subcharts (CloudPirates) are vendored into `helm/buzz/charts`.
   `make sync-chart` syncs, applies the patches and sets `Chart.yaml`, `Chart.lock` and `charts/*.tgz` to the
   vendored subchart versions; on Renovate's vendir bumps the `vendir-sync` workflow runs it and pushes the result.
   Renovate leaves the vendored trees alone otherwise: they move with `vendir.yml` only.
@@ -25,8 +25,10 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
   `@schema` annotations for the generated `values.schema.json`.
 - `images/buzz-minio` is the quickstart's MinIO + `mc` image, upstream's `ghcr.io/block/buzz-minio` for
   `linux/amd64` and `linux/arm64`. The `push-buzz-minio-to-registries` CI job (`.circleci/custom.yml`) publishes
-  it to `gsoci.azurecr.io/giantswarm/buzz-minio` with every release, under the release version; `minio.image`
-  and `minio.mcImage` pin one of those tags.
+  it to `gsoci.azurecr.io/giantswarm/buzz-minio` with every release, under the release version, and from tags
+  only. `minio.image` and `minio.mcImage` default to `minio.repository` at the chart's own version, so a chart
+  runs the build of its release; the branch build's kind deploy (`helm/buzz/ci/quickstart-values.yaml`) pins the
+  latest release's instead, since no branch build pushes one.
 
 To move to a new upstream release: bump `ref` in `vendir.yml` (and the subchart versions if upstream's
 `Chart.yaml` changed them), run `make sync-chart` (drop a patch upstream has taken), set `appVersion` in `helm/buzz/Chart.yaml` to the relay version,
