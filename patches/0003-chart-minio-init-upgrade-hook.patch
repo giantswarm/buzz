@@ -1,0 +1,45 @@
+diff --git a/helm/buzz/templates/quickstart-minio-init.yaml b/helm/buzz/templates/quickstart-minio-init.yaml
+index cc2c9d5..55b85a4 100644
+--- a/helm/buzz/templates/quickstart-minio-init.yaml
++++ b/helm/buzz/templates/quickstart-minio-init.yaml
+@@ -15,20 +15,37 @@ created. Running the Job as a normal resource lets helm create MinIO, this Job,
+ and the relay Deployment together; the Job's `until` loop waits for MinIO, and
+ `--wait` waits for the Job to complete alongside the Deployment.
+ 
+-The name carries the release revision so `helm upgrade` creates a fresh Job
+-(a completed Job's spec is immutable); `ttlSecondsAfterFinished` GCs it.
+-Quickstart-only.
++On install the Job is that normal resource; its name carries the release
++revision so it never meets an upgrade's Job (a completed Job's spec is
++immutable). On upgrade the previous revision's MinIO is already running, so the
++Job is a `pre-upgrade` hook with a stable name: `before-hook-creation` replaces
++a failed attempt's Job with the next attempt's and `hook-succeeded` removes it
++once the bucket exists, so a normal upgrade initialises once and a failed one
++leaves no Job behind. `activeDeadlineSeconds` ends a Job that never starts (an
++image that cannot be pulled) by helm's and Flux's default 5m timeout, and
++`ttlSecondsAfterFinished` GCs a finished one. Quickstart-only.
+ */ -}}
+ {{- if .Values.minio.enabled -}}
+ apiVersion: batch/v1
+ kind: Job
+ metadata:
++  {{- if .Release.IsUpgrade }}
++  name: {{ include "buzz.minioFullname" . }}-init
++  {{- else }}
+   name: {{ include "buzz.minioFullname" . }}-init-{{ .Release.Revision }}
++  {{- end }}
+   labels:
+     {{- include "buzz.labels" . | nindent 4 }}
+     app.kubernetes.io/component: minio-init
++  {{- if .Release.IsUpgrade }}
++  annotations:
++    helm.sh/hook: pre-upgrade
++    helm.sh/hook-weight: "0"
++    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
++  {{- end }}
+ spec:
+   backoffLimit: 10
++  activeDeadlineSeconds: 300
+   ttlSecondsAfterFinished: 120
+   template:
+     metadata:

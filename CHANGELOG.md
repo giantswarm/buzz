@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- fixed: the MinIO bucket init Job no longer piles up across failed upgrades: on upgrade it is a `pre-upgrade` hook with a stable name that replaces a failed attempt's Job and is removed once it succeeds, and `activeDeadlineSeconds: 300` ends one whose image cannot be pulled; on install it stays a normal resource, so `helm install --wait` does not deadlock; carried on upstream's templates as `patches/0003-chart-minio-init-upgrade-hook.patch`.
 - fixed: the default `minio.image` and `minio.mcImage` tag drops the chart version's build metadata, which Flux's `OCIRepository` appends (`0.3.2+<digest>`) and an image reference does not allow; under Flux the bundled MinIO no longer fails with `InvalidImageName`.
 - changed: `minio.image` and `minio.mcImage` default to `minio.repository` at the chart's own version, the buzz-minio build every release pushes, instead of a pinned tag; carried on upstream's templates as `patches/0002-chart-minio-image-default.patch`.
 - fixed: the buzz-minio image is no longer pushed from `main` or a release branch, whose head after a release is the tagged commit; the `main` build after a release no longer fails.

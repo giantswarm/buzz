@@ -1,0 +1,73 @@
+suite: minio init job
+templates:
+  - templates/quickstart-minio-init.yaml
+release:
+  name: buzz
+set:
+  relayUrl: wss://buzz.example.com
+  ownerPubkey: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  externalPostgresql.url: postgres://buzz@postgres:5432/buzz
+  minio.enabled: true
+tests:
+  - it: is a normal resource on install, named by the revision
+    release:
+      revision: 1
+    asserts:
+      - equal:
+          path: metadata.name
+          value: buzz-minio-init-1
+      - notExists:
+          path: metadata.annotations
+      - equal:
+          path: spec.activeDeadlineSeconds
+          value: 300
+      - equal:
+          path: spec.backoffLimit
+          value: 10
+      - equal:
+          path: spec.ttlSecondsAfterFinished
+          value: 120
+
+  - it: is a pre-upgrade hook with a stable name on upgrade
+    release:
+      revision: 21
+      upgrade: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: buzz-minio-init
+      - equal:
+          path: metadata.annotations["helm.sh/hook"]
+          value: pre-upgrade
+      - equal:
+          path: metadata.annotations["helm.sh/hook-weight"]
+          value: "0"
+      - equal:
+          path: metadata.annotations["helm.sh/hook-delete-policy"]
+          value: before-hook-creation,hook-succeeded
+      - equal:
+          path: spec.activeDeadlineSeconds
+          value: 300
+      - equal:
+          path: spec.backoffLimit
+          value: 10
+
+  - it: keeps the same name across upgrades, so the next attempt replaces a failed Job
+    release:
+      revision: 22
+      upgrade: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: buzz-minio-init
+
+  - it: renders nothing without the bundled MinIO
+    set:
+      minio.enabled: false
+      s3.endpoint: https://s3.example.com
+      s3.bucket: buzz
+      s3.accessKey: a
+      s3.secretKey: b
+    asserts:
+      - hasDocuments:
+          count: 0
