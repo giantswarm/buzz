@@ -40,7 +40,7 @@ jobs:
   sync:
     name: Sync the vendored chart and push
     if: startsWith(github.head_ref, 'renovate/vendir/') && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     steps:
