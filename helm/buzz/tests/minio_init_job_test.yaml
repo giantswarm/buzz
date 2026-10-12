@@ -3,6 +3,7 @@ templates:
   - templates/quickstart-minio-init.yaml
 release:
   name: buzz
+  namespace: buzz
 set:
   relayUrl: wss://buzz.example.com
   ownerPubkey: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -28,7 +29,21 @@ tests:
           path: spec.ttlSecondsAfterFinished
           value: 120
 
-  - it: is a pre-upgrade hook with a stable name on upgrade
+  - it: is a pre-upgrade hook with a stable name on an upgrade that finds MinIO
+    kubernetesProvider:
+      scheme:
+        "apps/v1/Deployment":
+          gvr:
+            group: apps
+            version: v1
+            resource: deployments
+          namespaced: true
+      objects:
+        - apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: buzz-minio
+            namespace: buzz
     release:
       revision: 21
       upgrade: true
@@ -53,6 +68,20 @@ tests:
           value: 10
 
   - it: keeps the same name across upgrades, so the next attempt replaces a failed Job
+    kubernetesProvider:
+      scheme:
+        "apps/v1/Deployment":
+          gvr:
+            group: apps
+            version: v1
+            resource: deployments
+          namespaced: true
+      objects:
+        - apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: buzz-minio
+            namespace: buzz
     release:
       revision: 22
       upgrade: true
@@ -60,6 +89,20 @@ tests:
       - equal:
           path: metadata.name
           value: buzz-minio-init
+
+  - it: stays the normal revision-named Job on an upgrade that enables MinIO
+    release:
+      revision: 7
+      upgrade: true
+    asserts:
+      - equal:
+          path: metadata.name
+          value: buzz-minio-init-7
+      - notExists:
+          path: metadata.annotations
+      - equal:
+          path: spec.activeDeadlineSeconds
+          value: 300
 
   - it: renders nothing without the bundled MinIO
     set:
