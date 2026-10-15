@@ -19,7 +19,8 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
   vendored subchart versions; on Renovate's vendir bumps the `vendir-sync` workflow runs it and pushes the result.
   Renovate leaves the vendored trees alone otherwise: they move with `vendir.yml` only.
 - `helm/buzz/tests` holds the chart's helm-unittest suites; `make helm-test` runs them with `helm lint`, as the
-  `chart-test` CI job does.
+  `chart-test` CI job does. It runs every suite under `helm/`, so the ones the vendored subcharts ship
+  (`helm/buzz/charts/redis/tests`) run too.
 - `helm/buzz/values.yaml` is upstream's `values.yaml` with every image on `gsoci.azurecr.io`, where
   [retagger](https://github.com/giantswarm/retagger) mirrors them (`ghcr.io/block/buzz`, `postgres`, `redis`), and
   `@schema` annotations for the generated `values.schema.json`.

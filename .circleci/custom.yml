@@ -2,7 +2,8 @@
 # workflow in config.yml deep-merges this file into it at pipeline runtime;
 # devctl never touches it.
 #
-#   - chart-test: helm lint plus the helm-unittest suites in helm/buzz/tests/
+#   - chart-test: helm lint plus every helm-unittest suite under helm/, both
+#     helm/buzz/tests/ and the ones the vendored subcharts ship
 #     (`make helm-test`). The unittest plugin is not in the app-build-suite
 #     image, so the job runs in a plain container with a pinned helm.
 #   - push-buzz-minio-to-registries: the quickstart's MinIO + mc image

@@ -1,7 +1,5 @@
 ##@ Chart
 
-HELM_UNITTEST_VERSION := 1.0.3
-
 .PHONY: sync-chart
 sync-chart: ## Vendor everything in vendir.yml, re-apply patches/*.patch and bring Chart.yaml, Chart.lock and charts/*.tgz in line.
 	vendir sync
@@ -17,17 +15,12 @@ sync-chart: ## Vendor everything in vendir.yml, re-apply patches/*.patch and bri
 	@# did not change keeps its committed bytes, so a second sync is a no-op.
 	@git diff --name-only -- 'helm/buzz/charts/*.tgz' | xargs -r git checkout --
 
+# Prerequisite-only, no recipe: make merges it into the generated helm-test
+# rule, which keeps its recipe and gains the lint. That recipe runs every
+# suite under helm/, the vendored subcharts' own suites included.
 .PHONY: helm-test
-helm-test: helm-lint helm-unittest ## Run every chart check (what the chart-test CI job runs).
+helm-test: helm-lint
 
 .PHONY: helm-lint
 helm-lint: ## Lint the chart with the quickstart values.
 	helm lint helm/buzz -f helm/buzz/ci/quickstart-values.yaml
-
-.PHONY: helm-unittest
-helm-unittest: helm-plugin-unittest ## Run the helm-unittest suites in helm/buzz/tests/ (not the vendored subcharts').
-	helm unittest --with-subchart=false helm/buzz
-
-.PHONY: helm-plugin-unittest
-helm-plugin-unittest:
-	@helm plugin list | grep -q '^unittest' || helm plugin install https://github.com/helm-unittest/helm-unittest --version $(HELM_UNITTEST_VERSION)
