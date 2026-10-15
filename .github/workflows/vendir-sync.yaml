@@ -14,9 +14,9 @@
 #     it changes nothing, so the run the push triggers exits without pushing.
 #   * A patch that no longer applies fails `make sync-chart` and nothing is
 #     pushed; the PR stays red until a person refreshes the patch.
-#   * The push uses the taylorbot PAT, not GITHUB_TOKEN, so the required checks
-#     run on the new head; renovate.json5 lists its author in gitIgnoredAuthors
-#     and Renovate keeps rebasing the branch as its own.
+#   * The push uses a giantswarm-release App token, not GITHUB_TOKEN, so the
+#     required checks run on the new head; renovate.json5 lists its author in
+#     gitIgnoredAuthors and Renovate keeps rebasing the branch as its own.
 name: vendir-sync
 
 on:
@@ -44,12 +44,19 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Generate giantswarm-release token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+          permission-contents: write
       - name: Check out the PR branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref }}
-          # The PAT is kept in the checkout so `git push` below uses it.
-          token: ${{ secrets.TAYLORBOT_GITHUB_ACTION }}
+          # The App token is kept in the checkout so `git push` below uses it.
+          token: ${{ steps.app-token.outputs.token }}
       - name: Install helm and vendir
         run: |
           set -euo pipefail
@@ -81,8 +88,8 @@ jobs:
           pre-commit run helm-docs --all-files
       - name: Set up git identity
         run: |
-          git config --local user.email "dev@giantswarm.io"
-          git config --local user.name "taylorbot"
+          git config --local user.email "342014845+giantswarm-release[bot]@users.noreply.github.com"
+          git config --local user.name "giantswarm-release[bot]"
       - name: Commit and push the synced chart
         run: |
           set -euo pipefail
