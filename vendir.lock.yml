@@ -19,7 +19,7 @@ directories:
     path: postgres
   - helmChart:
       appVersion: 8.10.2
-      version: 0.37.3
+      version: 0.37.4
     path: redis
   path: helm/buzz/charts
 kind: LockConfig

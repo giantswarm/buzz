@@ -2,11 +2,11 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis]: Fix: IPv6-only cluster leaves arbiter unreachable and extra
-        … (#1823)'
+      description: '[redis] Fix preStop failover wait when Sentinel reports hostnames
+        (#1828)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1823
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1828
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -47,4 +47,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.37.3
+version: 0.37.4
