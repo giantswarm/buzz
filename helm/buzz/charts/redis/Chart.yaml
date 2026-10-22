@@ -2,11 +2,11 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] Honour sentinel.config.announceHostnames in the Sentinel container
-        (#1813)'
+      description: '[oliver006/redis_exporter] Update metrics.image.repository to v1.94.0
+        (#1844)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1813
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1844
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -47,4 +47,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.37.2
+version: 0.37.5
