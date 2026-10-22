@@ -4,7 +4,7 @@
 # push-buzz-minio-to-registries CircleCI job (.circleci/custom.yml) and tagged
 # with the release version. The binaries are MinIO's checksummed official
 # releases, the versions upstream's ghcr.io/block/buzz-minio carries.
-FROM gsoci.azurecr.io/giantswarm/alpine:3.24.2
+FROM gsoci.azurecr.io/giantswarm/alpine:3.24.3
 
 ARG TARGETARCH
 ARG MINIO_RELEASE=RELEASE.2025-09-07T16-13-09Z
