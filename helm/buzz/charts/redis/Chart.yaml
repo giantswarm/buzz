@@ -2,11 +2,10 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] Sentinel peers authenticate with the Sentinel ACL user (sentinel.acl)
-        (#1860)'
+      description: '[redis] Sentinel ACL examples grant channel permissions (#1861)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1860
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1861
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -47,4 +46,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.37.10
+version: 0.37.11
