@@ -2,10 +2,10 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] Sentinel ACL examples grant channel permissions (#1861)'
+      description: '[redis] preStop hooks reach Redis and Sentinel over TLS (#1862)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1861
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1862
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -46,4 +46,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.37.11
+version: 0.37.12
