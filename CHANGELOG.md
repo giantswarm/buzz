@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- removed: the deprecated `replace-chart-version-with-git` key from `.abs/main.yaml`.
 - changed: `make helm-test` no longer runs `helm/buzz/tests` twice: the hand-written target beside the generated one in `Makefile.gen.app.mk` (giantswarm/devctl#2570) is gone, so the helm-unittest version is pinned in one place. `make helm-lint` still runs as part of it, and so do the suites the vendored subcharts ship, as before.
 - fixed: an upgrade that enables the bundled MinIO no longer fails on the bucket init hook: the Job is a `pre-upgrade` hook only when the release's MinIO Deployment already exists, otherwise the normal revision-named Job that runs alongside MinIO; in `patches/0003-chart-minio-init-upgrade-hook.patch`.
 - fixed: the MinIO bucket init Job no longer piles up across failed upgrades: on upgrade it is a `pre-upgrade` hook with a stable name that replaces a failed attempt's Job and is removed once it succeeds, and `activeDeadlineSeconds: 300` ends one whose image cannot be pulled; on install it stays a normal resource, so `helm install --wait` does not deadlock; carried on upstream's templates as `patches/0003-chart-minio-init-upgrade-hook.patch`.
