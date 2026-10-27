@@ -6,15 +6,17 @@
 #     helm/buzz/tests/ and the ones the vendored subcharts ship
 #     (`make helm-test`). The unittest plugin is not in the app-build-suite
 #     image, so the job runs in a plain container with a pinned helm.
-#   - push-buzz-minio-to-registries: the quickstart's MinIO + mc image
-#     (images/buzz-minio) for linux/amd64 and linux/arm64, tagged with the
-#     release version, which the chart's minio.image and minio.mcImage default
-#     to. Branch builds prove the image builds for both platforms; main and
-#     the release branches skip it like build-chart does: after a release
-#     their head is the tagged commit, where architect refuses to publish the
-#     release version again. The tag build pushes to gsoci only
-#     (split-china-push); sync-china-registry copies the release to the
-#     Aliyun mirror from the in-China runner, so no push crosses the Pacific.
+#   - build-buzz-minio: builds the quickstart's MinIO + mc image
+#     (images/buzz-minio) for linux/amd64 and linux/arm64 on branches without
+#     pushing it (push: false), so a pull request proves the image builds and
+#     the registry gets no dev tag. main and the release branches skip it like
+#     build-chart does: after a release their head is the tagged commit, and
+#     architect fails a branch build of a tagged commit.
+#   - push-buzz-minio-to-registries: the same build on release tags only,
+#     tagged with the release version, which the chart's minio.image and
+#     minio.mcImage default to. It pushes to gsoci only (split-china-push);
+#     sync-china-registry copies the release to the Aliyun mirror from the
+#     in-China runner, so no push crosses the Pacific.
 version: 2.1
 
 jobs:
@@ -45,22 +47,33 @@ workflows:
           tags:
             only: /^v.*/
     - architect/push-to-registries:
+        name: build-buzz-minio
+        image: giantswarm/buzz-minio
+        build-context: ./images/buzz-minio
+        dockerfile: ./images/buzz-minio/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: false
+        # Nothing downstream reads .build_version; build-chart persists its own.
+        persist-build-version: false
+        filters:
+          branches:
+            ignore:
+            - main
+            - /^release-v?[0-9]+(\.[0-9]+)?\.x$/
+    - architect/push-to-registries:
         context: architect
         name: push-buzz-minio-to-registries
         image: giantswarm/buzz-minio
         build-context: ./images/buzz-minio
         dockerfile: ./images/buzz-minio/Dockerfile
         platforms: linux/amd64,linux/arm64
-        # Nothing downstream reads .build_version; build-chart persists its own.
         persist-build-version: false
         split-china-push: true
         filters:
           tags:
             only: /^v.*/
           branches:
-            ignore:
-            - main
-            - /^release-v?[0-9]+(\.[0-9]+)?\.x$/
+            ignore: /.*/
     - architect/sync-china-registry:
         context: architect
         name: sync-buzz-minio-to-china-registry
