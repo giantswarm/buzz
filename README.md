@@ -29,7 +29,7 @@ This repository packages upstream's Helm chart for the Giant Swarm app platform 
   it to `gsoci.azurecr.io/giantswarm/buzz-minio` with every release, under the release version; `build-buzz-minio`
   proves the build on every branch and pushes nothing. `minio.image` and `minio.mcImage` default to `minio.repository` at the chart's own
   version, so a chart runs the build of its release; the branch build's kind deploy
-  (`helm/buzz/ci/quickstart-values.yaml`) pins the latest release's build, which the branch's push does not gate.
+  (`helm/buzz/ci/quickstart-values.yaml`) pins the latest release's build, which Renovate bumps with each release.
 
 To move to a new upstream release: bump `ref` in `vendir.yml` (and the subchart versions if upstream's
 `Chart.yaml` changed them), run `make sync-chart` (drop a patch upstream has taken), set `appVersion` in `helm/buzz/Chart.yaml` to the relay version,
