@@ -2,10 +2,11 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] preStop hooks reach Redis and Sentinel over TLS (#1862)'
+      description: '[redis] Sentinel container stops on SIGTERM instead of waiting out
+        its grace period (#1866)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1862
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1866
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -46,4 +47,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.37.12
+version: 0.37.13
