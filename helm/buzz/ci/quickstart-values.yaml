@@ -12,8 +12,8 @@ minio:
   # published with the release; the kind deploy runs the latest release's
   # build instead. Renovate bumps both tags with each release: the custom
   # manager 'buzz-minio quickstart pin' in renovate-custom.json5.
-  image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.37
-  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.37
+  image: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.39
+  mcImage: gsoci.azurecr.io/giantswarm/buzz-minio:0.3.39
 relayUrl: wss://buzz.test.local
 ownerPubkey: "0000000000000000000000000000000000000000000000000000000000000001"
 relay:
