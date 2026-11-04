@@ -2,7 +2,11 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: 'Fix #1870'
+      description: '[redis] Add sentinel.discoveryHosts so a restarting pod finds a remote
+        master (#1876)'
+      links:
+      - name: Pull Request
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1876
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -43,4 +47,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.37.15
+version: 0.38.0
