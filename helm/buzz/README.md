@@ -11,10 +11,12 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 
 ## Requirements
 
-| Repository | Name | Version |
-|------------|------|---------|
-| file://charts/postgres | postgresql(postgres) | 0.21.2 |
-| file://charts/redis | redis | 0.37.15 |
+The versions are pinned in `Chart.yaml`.
+
+| Repository | Name |
+|------------|------|
+| file://charts/postgres | postgresql(postgres) |
+| file://charts/redis | redis |
 
 ## Values
 
@@ -151,7 +153,7 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | postgresql.enabled | bool | `false` |  |
 | postgresql.image.registry | string | `"gsoci.azurecr.io"` |  |
 | postgresql.image.repository | string | `"giantswarm/postgres"` |  |
-| postgresql.image.tag | string | `"18.6"` |  |
+| postgresql.image.tag | string | the newest PostgreSQL release on the gsoci mirror, kept current by Renovate | The PostgreSQL image tag. |
 | postgresql.auth.database | string | `"buzz"` |  |
 | postgresql.auth.username | string | `"buzz"` |  |
 | postgresql.auth.existingSecret | string | `"{{ if contains \"buzz\" .Release.Name }}{{ .Release.Name }}-relay{{ else }}{{ .Release.Name }}-buzz-relay{{ end }}"` |  |
@@ -162,7 +164,7 @@ Buzz, a self-hostable Nostr relay workspace where people and AI agents share cha
 | redis.enabled | bool | `false` |  |
 | redis.image.registry | string | `"gsoci.azurecr.io"` |  |
 | redis.image.repository | string | `"giantswarm/redis"` |  |
-| redis.image.tag | string | `"8.10.3"` |  |
+| redis.image.tag | string | the newest Redis release on the gsoci mirror, kept current by Renovate | The Redis image tag. |
 | redis.auth.existingSecret | string | `"{{ if contains \"buzz\" .Release.Name }}{{ .Release.Name }}-relay{{ else }}{{ .Release.Name }}-buzz-relay{{ end }}"` |  |
 | redis.auth.existingSecretPasswordKey | string | `"redis-password"` |  |
 | redis.persistence.enabled | bool | `true` |  |
