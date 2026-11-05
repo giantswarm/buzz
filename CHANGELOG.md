@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- changed: the chart README no longer prints versions. The Requirements table lists the subcharts without their versions (pinned in `Chart.yaml`), and `postgresql.image.tag` and `redis.image.tag` carry a helm-docs `@default`, so a Renovate bump no longer changes the README and fails `pre-commit`.
 - changed: a branch build no longer pushes a dev `buzz-minio` image: `build-buzz-minio` builds it for both platforms without pushing, and `push-buzz-minio-to-registries` runs on release tags only.
 - removed: the deprecated `replace-chart-version-with-git` key from `.abs/main.yaml`.
 - changed: `make helm-test` no longer runs `helm/buzz/tests` twice: the hand-written target beside the generated one in `Makefile.gen.app.mk` (giantswarm/devctl#2570) is gone, so the helm-unittest version is pinned in one place. `make helm-lint` still runs as part of it, and so do the suites the vendored subcharts ship, as before.
