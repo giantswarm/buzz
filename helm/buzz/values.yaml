@@ -303,7 +303,7 @@ postgresql:  # @schema skipProperties: true; additionalProperties: true
     repository: giantswarm/postgres
     # -- The PostgreSQL image tag.
     # @default -- the newest PostgreSQL release on the gsoci mirror, kept current by Renovate
-    tag: "18.6"
+    tag: "18.7"
   auth:
     database: buzz
     username: buzz
