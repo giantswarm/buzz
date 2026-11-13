@@ -2,10 +2,10 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] cluster-init Job uses the chart ServiceAccount (#1912)'
+      description: '[redis] Add clusterInitJob.ttlSecondsAfterFinished (#1917)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1912
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1917
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -46,4 +46,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.38.2
+version: 0.39.0
