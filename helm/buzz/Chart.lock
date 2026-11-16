@@ -1,9 +1,9 @@
 dependencies:
 - name: postgres
   repository: file://charts/postgres
-  version: 0.22.0
+  version: 0.22.1
 - name: redis
   repository: file://charts/redis
   version: 0.39.1
-digest: sha256:126a0eafa88fe83b1397fed451c56d1c7065ff8868c2eaff5600b95d791ed0d7
-generated: "2026-11-16T01:42:00.191422331Z"
+digest: sha256:f9a93f84e2297abb97c960ff7d6486e599669b24ae918b7af12a9c38f5c07dad
+generated: "2026-11-16T07:45:17.400288779Z"

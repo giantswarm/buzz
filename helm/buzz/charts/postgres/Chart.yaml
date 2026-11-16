@@ -2,15 +2,10 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[postgres] Support postgres-exporter args (#1879)'
+      description: '[postgres] Update image.repository to v18.7 (#1927)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1879
-    - kind: changed
-      description: '[postgres] doc: Add reference to pgautoupgrade (#1877)'
-      links:
-      - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1877
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1927
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: PostgreSQL
@@ -28,7 +23,7 @@ annotations:
     url: https://raw.githubusercontent.com/CloudPirates-io/helm-charts/refs/heads/main/cosign.pub
   license: Apache-2.0
 apiVersion: v2
-appVersion: 18.6.0
+appVersion: 18.7.0
 dependencies:
 - name: common
   repository: oci://registry-1.docker.io/cloudpirates
@@ -51,4 +46,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/postgres
 - https://github.com/postgres/postgres
 type: application
-version: 0.22.0
+version: 0.22.1
