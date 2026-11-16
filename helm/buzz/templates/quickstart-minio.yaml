@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: minio
-          image: {{ .Values.minio.image | quote }}
+          image: {{ include "buzz.minioImage" . | quote }}
           args: ["server", "/data", "--console-address", ":9001"]
           env:
             - name: MINIO_ROOT_USER
