@@ -2,11 +2,10 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] Accept an integer service.nodePort and metrics.service.nodePort
-        (#1921)'
+      description: '[busybox] Update volumePermissions.image.repository to a46257e (#1885)'
       links:
       - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1921
+        url: https://github.com/CloudPirates-io/helm-charts/pull/1885
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -22,7 +21,7 @@ annotations:
     url: https://raw.githubusercontent.com/CloudPirates-io/helm-charts/refs/heads/main/cosign.pub
   license: Apache-2.0
 apiVersion: v2
-appVersion: 8.10.2
+appVersion: 8.10.3
 dependencies:
 - name: common
   repository: oci://registry-1.docker.io/cloudpirates
@@ -47,4 +46,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.39.1
+version: 0.39.6
