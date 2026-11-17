@@ -5,7 +5,7 @@
 # workflow in .circleci/config.yml merges into this file at pipeline runtime.
 version: 2.1
 orbs:
-  architect: giantswarm/architect@10.17.4
+  architect: giantswarm/architect@10.18.0
 
 commands:
   # Pre-steps of the chart-test jobs: pull the images run-tests-with-ats starts
@@ -104,6 +104,17 @@ workflows:
         # The version pin-version persisted (every chart job attaches the
         # workspace for it).
         attach_workspace: true
+        # app-build-suite fails a chart whose gsoci image references the registry
+        # does not carry. build-chart runs before this pipeline pushes its own
+        # image (a branch without branchPublish never pushes it), so that image
+        # at the version the chart is stamped with is exempt here; every other
+        # reference, the mirrored third-party images included, is resolved.
+        # push-chart and push-chart-release require the image job and resolve
+        # all of them.
+        pre-steps:
+        - run:
+            name: Exempt this pipeline's own image from the image reference check
+            command: echo 'export ABS_HELM_IMAGE_REFERENCE_VALIDATOR_OWN_IMAGE=gsoci.azurecr.io/giantswarm/buzz-minio' >> "$BASH_ENV"
         requires:
         - pin-version
         filters:
