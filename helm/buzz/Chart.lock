@@ -4,6 +4,6 @@ dependencies:
   version: 0.22.1
 - name: redis
   repository: file://charts/redis
-  version: 0.39.6
-digest: sha256:44a68af4056ea413ddd0ff7d398ba1ae95f5b9f5dcfd1d46a8a09fc71ffc7645
-generated: "2026-11-16T08:34:09.805195725Z"
+  version: 0.40.0
+digest: sha256:ba08cbeb5d05a433068722a1bf50e88d53ac2e7dd258743a7ecab4c77196b8c4
+generated: "2026-11-18T21:04:40.242118501Z"
