@@ -327,7 +327,7 @@ redis:  # @schema skipProperties: true; additionalProperties: true
     repository: giantswarm/redis
     # -- The Redis image tag.
     # @default -- the newest Redis release on the gsoci mirror, kept current by Renovate
-    tag: "8.10.3"
+    tag: "8.12.0"
   auth:
     existingSecret: '{{ if contains "buzz" .Release.Name }}{{ .Release.Name }}-relay{{ else }}{{ .Release.Name }}-buzz-relay{{ end }}'
     existingSecretPasswordKey: redis-password
