@@ -233,6 +233,7 @@ user sentinel on >sentinelpassword allchannels +multi +slaveof +ping +exec +subs
 | `cluster.announceHostnamesOverride` | Map of hostnames to announce for Redis Cluster topology. Overrides the default behavior of announcing pod hostnames. Useful for external access with LoadBalancers. Only works if `announceHostnames` is `true` (e.g. `0: foo-bar-0`) | `{}` |
 | `cluster.announceIpsOverride` | Map of IPs to announce for Redis Cluster topology. Overrides the default behavior of announcing pod IPs. Useful for external access with LoadBalancers. Only works if `announceHostnames` is `false` (e.g. `0: 1.2.3.4`) | `{}` |
 | `cluster.startupSleepTime` | Seconds to sleep in the init container before configuring Redis Cluster. Useful when persistence is disabled: gives the cluster time to detect a failed master and elect a new one before the restarting pod rejoins, preventing the old master from re-entering as master with an empty dataset. Set to `0` to disable | `0` |
+| `cluster.refreshNodesConfIPs` | Re-resolve peer IPs in the persisted `nodes.conf` on container start, so a cluster whose pods were all stopped and started again can re-form with the new pod IPs. Only applies when `cluster.announceHostnames` is `true` and external access is disabled | `true` |
 | `cluster.config.nodeTimeout` | Cluster node timeout in milliseconds | `15000` |
 | `cluster.config.requireFullCoverage` | Require full coverage to accept queries | `true` |
 
@@ -372,6 +373,7 @@ Redis Sentinel provides high availability for Redis through automatic failover. 
 | `sentinel.idSeed`                             | Seed for a stable Sentinel id across restarts; defaults to the release fullname                 | `""`        |
 | `sentinel.discoveryHosts`                     | Extra Sentinel addresses (`host` or `host:port`) asked for the master on startup (multi-cluster) | `[]`        |
 | `sentinel.discoverySelfHost`                  | Address the Sentinels report when this release is the master; a pod then waits for a restarting remote master instead of starting as a second one | `""`        |
+| `sentinel.discoveryBootstrapHost`             | Address of the one release allowed to start as master when no Sentinel of the group answers; the other releases start as its replicas | `""`        |
 | `sentinel.quorum`                             | Number of Sentinels needed to agree on master failure                                         | `2`         |
 | `sentinel.downAfterMilliseconds`              | Time in ms after master is declared down                                                      | `30000`     |
 | `sentinel.failoverTimeout`                    | Timeout for failover in ms                                                                    | `180000`    |

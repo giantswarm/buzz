@@ -208,6 +208,11 @@ cluster:
   ## a new one before the restarting pod rejoins, preventing the old master from re-entering as master
   ## with an empty dataset. Set to 0 to disable (default).
   startupSleepTime: 0
+  ## @param cluster.refreshNodesConfIPs Re-resolve peer IPs in the persisted nodes.conf on container start
+  ## After all pods were stopped and started again, nodes.conf still lists the old pod IPs. When enabled, each pod
+  ## replaces them with the current IPs of the peers that are already resolvable via the headless service, so the
+  ## cluster can re-form. Only applies when cluster.announceHostnames is true and external access is disabled.
+  refreshNodesConfIPs: true
   ## @param cluster.config Additional cluster-specific configuration settings
   ## These settings are automatically applied when architecture=cluster
   config:
@@ -541,6 +546,8 @@ sentinel:
   ## List the externally-resolvable Sentinel addresses of the other releases here. They are asked after
   ## the local Sentinels and before bootstrap. A reported master that does not answer is ignored, so a
   ## pod that restarts while it is still the master keeps that role.
+  ## The Sentinel container asks them too, before it falls back to its own Redis or to pod-0, so a
+  ## restarted Sentinel monitors the group's master from the start.
   discoveryHosts: []
   ## @param sentinel.discoverySelfHost Address the Sentinels report when this release is the master (its replica-announce-ip)
   ## Only used with sentinel.discoveryHosts, for releases running a single Redis pod. Without it a pod
@@ -549,6 +556,14 @@ sentinel:
   ## When set, a pod reported as master keeps the role, and a pod whose reported master is another
   ## release replicates from it even if it does not answer yet, as a fixed replicaof would.
   discoverySelfHost: ""
+  ## @param sentinel.discoveryBootstrapHost Address of the one release allowed to start as master when no Sentinel of the group answers
+  ## Requires sentinel.discoveryHosts and sentinel.discoverySelfHost. When every release restarts at once,
+  ## no Sentinel answers and each release falls back to bootstrap, where its pod-0 starts as master, so the
+  ## group comes back with one master per release until the Sentinels settle on one, and the writes taken
+  ## by the others are lost. When set, only the release whose sentinel.discoverySelfHost matches it starts
+  ## as master; the others start as its replicas and their Sentinels monitor it. Set the same value in
+  ## every release. If that release cannot start, the others wait as replicas until it does.
+  discoveryBootstrapHost: ""
   ## @param sentinel.quorum Number of Sentinels that need to agree about the fact the master is not reachable
   quorum: 2
   ## @param sentinel.downAfterMilliseconds Time in milliseconds after the master is declared down
