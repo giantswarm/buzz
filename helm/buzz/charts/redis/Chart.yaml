@@ -2,11 +2,7 @@ annotations:
   artifacthub.io/category: database
   artifacthub.io/changes: |-
     - kind: changed
-      description: '[redis] Add sentinel.discoverySelfHost so a restarting group keeps
-        one master (#1939)'
-      links:
-      - name: Pull Request
-        url: https://github.com/CloudPirates-io/helm-charts/pull/1939
+      description: Add cluster.refreshNodesConfIPs
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/links: |
     - name: Redis
@@ -47,4 +43,4 @@ sources:
 - https://github.com/CloudPirates-io/helm-charts/tree/main/charts/redis
 - https://github.com/redis/redis
 type: application
-version: 0.40.0
+version: 0.42.0

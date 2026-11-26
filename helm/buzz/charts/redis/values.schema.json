@@ -120,6 +120,9 @@
                         }
                     }
                 },
+                "refreshNodesConfIPs": {
+                    "type": "boolean"
+                },
                 "startupSleepTime": {
                     "type": "integer"
                 }
@@ -657,6 +660,9 @@
                             "type": "string"
                         }
                     }
+                },
+                "discoveryBootstrapHost": {
+                    "type": "string"
                 },
                 "discoveryHosts": {
                     "type": "array"

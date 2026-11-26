@@ -2,6 +2,7 @@
 {{- include "redis.auth.acl.validate" . -}}
 {{- include "redis.sentinel.acl.validate" . -}}
 {{- include "redis.externalMaster.validate" . -}}
+{{- include "redis.sentinel.discoveryBootstrapHost.validate" . -}}
 {{- $useDeployment := and .Values.useDeployment (not .Values.persistence.enabled) -}}
 apiVersion: apps/v1
 {{- if $useDeployment }}
@@ -507,6 +508,17 @@ spec:
                 echo "masteruser {{ include "redis.auth.acl.defaultUsername" . }}" >> /tmp/redis.conf
                 {{- end }}
                 {{- end }}
+                {{- else if and .Values.sentinel.discoveryBootstrapHost (ne .Values.sentinel.discoveryBootstrapHost .Values.sentinel.discoverySelfHost) }}
+                # No Sentinel of the group answered, so the whole group is starting at once. Only the release at
+                # sentinel.discoveryBootstrapHost starts as master; replicate from it, Redis retries until it is up.
+                echo "Bootstrap mode: configuring as replica of the bootstrap release {{ .Values.sentinel.discoveryBootstrapHost }}"
+                echo "replicaof {{ .Values.sentinel.discoveryBootstrapHost }} {{ if .Values.tls.enabled }}{{ .Values.tls.port }}{{ else }}{{ .Values.service.port }}{{ end }}" >> /tmp/redis.conf
+                {{- if .Values.auth.enabled }}
+                echo "masterauth ${REDIS_PASSWORD}" >> /tmp/redis.conf
+                {{- if .Values.auth.acl.enabled }}
+                echo "masteruser {{ include "redis.auth.acl.defaultUsername" . }}" >> /tmp/redis.conf
+                {{- end }}
+                {{- end }}
                 {{- else }}
                 if [ "$POD_ORDINAL" != "0" ]; then
                   echo "Bootstrap mode: configuring as replica of pod-0"
@@ -802,6 +814,35 @@ spec:
               {{- if gt (int .Values.cluster.startupSleepTime) 0 }}
               echo "Sleeping for {{ .Values.cluster.startupSleepTime }}s (cluster.startupSleepTime configured)..."
               sleep {{ .Values.cluster.startupSleepTime }}
+              {{- end }}
+              {{- if and (eq .Values.architecture "cluster") .Values.cluster.announceHostnames (not .Values.cluster.externalAccess.enabled) .Values.cluster.refreshNodesConfIPs }}
+
+              # After a full stop the persisted nodes.conf still lists the old pod IPs of every peer, and redis
+              # only resolves hostnames when it learns about a new node. Re-resolve the peers that are already
+              # resolvable so the cluster can re-form instead of staying in cluster_state:fail.
+              NODES_FILE="{{ .Values.persistence.mountPath }}/nodes.conf"
+              if [ -f "$NODES_FILE" ]; then
+                : > "$NODES_FILE.tmp"
+                while IFS= read -r line; do
+                  addr=$(echo "$line" | awk '{print $2}')
+                  case "$line" in
+                    *myself*) echo "$line" >> "$NODES_FILE.tmp"; continue ;;
+                  esac
+                  peer_host=$(echo "$addr" | cut -s -d, -f2)
+                  peer_ip=""
+                  if [ -n "$peer_host" ]; then
+                    peer_ip=$(getent hosts "$peer_host" 2>/dev/null | awk '{print $1; exit}')
+                  fi
+                  if [ -n "$peer_ip" ]; then
+                    endpoint="${addr%%,*}"
+                    new_addr="${peer_ip}:${endpoint##*:}${addr#"$endpoint"}"
+                    echo "Refreshing nodes.conf: ${peer_host} -> ${peer_ip}"
+                    line=$(echo "$line" | awk -v new="$new_addr" '{$2=new; print}')
+                  fi
+                  echo "$line" >> "$NODES_FILE.tmp"
+                done < "$NODES_FILE"
+                mv "$NODES_FILE.tmp" "$NODES_FILE"
+              fi
               {{- end }}
 
               exec redis-server "$CONFIG_FILE" {{- range .Values.extraFlags }} {{ . }}{{- end }}
@@ -1317,6 +1358,36 @@ spec:
                 fi
               done
 
+              {{- if .Values.sentinel.discoveryHosts }}
+              # The Sentinels above belong to this release only. When the group spans several releases, ask
+              # the ones in sentinel.discoveryHosts too, as the init container does, before the role check and
+              # the pod-0 fallback: with a single pod per release both of those point this Sentinel at its own
+              # Redis, a replica, and clients asking it get the wrong master until the other Sentinels correct it.
+              # The reported master is not pinged: if it is down, the group fails over and this Sentinel follows.
+              if [ "$SENTINEL_FOUND_MASTER" = false ]; then
+                for SENTINEL_ADDR in {{ range .Values.sentinel.discoveryHosts }}{{ . | quote }} {{ end }}; do
+                  case "$SENTINEL_ADDR" in
+                    *:*:*) SENTINEL_HOST="$SENTINEL_ADDR"; SENTINEL_PORT={{ .Values.sentinel.port }} ;;
+                    *:*) SENTINEL_HOST="${SENTINEL_ADDR%:*}"; SENTINEL_PORT="${SENTINEL_ADDR##*:}" ;;
+                    *) SENTINEL_HOST="$SENTINEL_ADDR"; SENTINEL_PORT={{ .Values.sentinel.port }} ;;
+                  esac
+                  {{- if .Values.sentinel.acl.enabled }}
+                  EXISTING_MASTER=$(REDISCLI_AUTH="${SENTINEL_ACL_PASSWORD}" timeout {{ .Values.sentinel.discoveryTimeout }} redis-cli --user {{ include "redis.sentinel.acl.defaultUsername" . }} -h "${SENTINEL_HOST}" -p "${SENTINEL_PORT}"{{- if .Values.tls.enabled }} {{ include "redis.tls.probeArgs" . }}{{- end }} sentinel get-master-addr-by-name {{ .Values.sentinel.masterName }} 2>/dev/null | head -1 || echo "")
+                  {{- else if .Values.auth.sentinel }}
+                  EXISTING_MASTER=$(REDISCLI_AUTH="${REDIS_PASSWORD}" timeout {{ .Values.sentinel.discoveryTimeout }} redis-cli -h "${SENTINEL_HOST}" -p "${SENTINEL_PORT}"{{- if .Values.tls.enabled }} {{ include "redis.tls.probeArgs" . }}{{- end }} sentinel get-master-addr-by-name {{ .Values.sentinel.masterName }} 2>/dev/null | head -1 || echo "")
+                  {{- else }}
+                  EXISTING_MASTER=$(timeout {{ .Values.sentinel.discoveryTimeout }} redis-cli -h "${SENTINEL_HOST}" -p "${SENTINEL_PORT}"{{- if .Values.tls.enabled }} {{ include "redis.tls.probeArgs" . }}{{- end }} sentinel get-master-addr-by-name {{ .Values.sentinel.masterName }} 2>/dev/null | head -1 || echo "")
+                  {{- end }}
+                  if [ -n "$EXISTING_MASTER" ] && echo "$EXISTING_MASTER" | grep -qE '^[A-Za-z0-9.:-]+$'; then
+                    MASTER_HOST="$EXISTING_MASTER"
+                    SENTINEL_FOUND_MASTER=true
+                    echo "Found current master via sentinel at ${SENTINEL_HOST}: $MASTER_HOST"
+                    break
+                  fi
+                done
+              fi
+              {{- end }}
+
               # Second priority: If no Sentinels found master, check if any Redis instance claims to be master
               if [ "$SENTINEL_FOUND_MASTER" = false ]; then
                 echo "No Sentinels available, checking Redis instances directly..."
@@ -1333,8 +1404,14 @@ spec:
 
               # Final fallback: Use pod-0 hostname for initial bootstrap only
               if [ -z "$MASTER_HOST" ]; then
+                {{- if .Values.sentinel.discoveryBootstrapHost }}
+                # Monitor the one release of the group allowed to start as master, as the init container does
+                MASTER_HOST={{ .Values.sentinel.discoveryBootstrapHost | quote }}
+                echo "No existing master found, using the bootstrap release for initial bootstrap: $MASTER_HOST"
+                {{- else }}
                 MASTER_HOST="{{ include "redis.fullname" . }}-0.{{ include "redis.fullname" . }}-headless.{{ include "cloudpirates.namespace" . }}.svc.{{ .Values.clusterDomain }}"
                 echo "No existing master found, using pod-0 for initial bootstrap: $MASTER_HOST"
+                {{- end }}
               fi
 
               {{- if not .Values.sentinel.config.announceHostnames }}
